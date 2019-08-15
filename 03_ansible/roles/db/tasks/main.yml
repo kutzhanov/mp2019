@@ -16,6 +16,7 @@
   tags: [ 'packages' ]
 
 - name: make mysql listen on all interfaces, allow incoming MySQL connections
+  become: true
   lineinfile:
     path: /etc/my.cnf
     line: "bind-address={{ ansible_eth0.ipv4.address }}"
