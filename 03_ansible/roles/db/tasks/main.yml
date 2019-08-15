@@ -1,0 +1,32 @@
+---
+# install MySQL server, make it listen on all interfaces, allow incoming MySQL connections,
+# make sure MySQL server is started and enabled for autostart, and add a database user
+# (use role default variables to store database credentials).
+- name: download MySQL Server RPM
+  get_url:
+    url: https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+    dest: ~/mysql57-community-release-el7-11.noarch.rpm
+
+- name: install MySQL server
+  become: true
+  yum:
+    name: ~/mysql57-community-release-el7-11.noarch.rpm
+    state: present
+  #  update_cache: yes
+  tags: [ 'packages' ]
+
+- name: make mysql listen on all interfaces, allow incoming MySQL connections
+  lineinfile:
+    path: /etc/my.cnf
+    line: "bind-address={{ ansible_eth0.ipv4.address }}"
+  notify: restart mysql
+
+- name: start MySQL and make sure it's enabled for autostart
+  become: true
+  service: name=mysqld state=started enabled=yes
+
+- name: add a database user
+  become: true
+  mysql_user:
+    name: {{ db_user_name }}
+    password: {{ db_user_pass }}

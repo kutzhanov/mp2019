@@ -1,0 +1,5 @@
+---
+- name: customize the bash prompt in some way for 3 instances ansible, db, web
+  lineinfile:
+    - path: ~/.bashrc
+      line: 'PS1="[\\u@\\h:\\w] tim \d $"'
