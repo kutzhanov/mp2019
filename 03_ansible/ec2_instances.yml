@@ -1,0 +1,120 @@
+Parameters:
+  subnetA:
+    Description: "ID of subnet A"
+    Type: String
+  subnetB:
+    Description: "ID of subnet B"
+    Type: String
+  AnsibleSGid:
+    Description: "security group ID for Ansible"
+    Type: String
+  WebSGid:
+    Description: "security group ID for Web"
+    Type: String
+  DbSGid:
+    Description: "security group ID for Db"
+    Type: String
+  ec2InstanceClass:
+    Description: "EC2 instance class (a list of allowed values must be pre-defined, t2.micro being the default);"
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+  keyPair:
+    Description: "EC2 key pair name"
+    Type: String
+
+Mappings:
+  RegionMap:
+    us-east-1:
+      AMI: ami-0b898040803850657
+    us-west-1:
+      AMI: ami-056ee704806822732
+    eu-west-1:
+      AMI: ami-0bbc25e23a7640b9b
+    ap-southeast-1:
+      AMI: ami-01f7527546b557442
+    ap-southeast-2:
+      AMI: ami-0dc96254d5535925f
+
+Resources:
+  AnsibleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      RoleName: AnsibleRole
+
+  AnsibleRolePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: AnsibleRolePolicy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: "*"
+            Resource: "*"
+      Roles: [!Ref AnsibleRole]
+
+  AnsibleInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles: [!Ref AnsibleRole]
+
+  AnsibleInstance:
+    # The instance "ansible" should be attached to instance profile to authenticate dynamic inventory script.
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId:
+        Fn::FindInMap:
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      KeyName: !Ref keyPair #"mp2019-keypair"
+      SecurityGroupIds: [!Ref AnsibleSGid]
+      InstanceType: !Ref ec2InstanceClass
+      SubnetId: !Ref subnetA
+      IamInstanceProfile: !Ref AnsibleInstanceProfile
+      Tags:
+        - Key: Name
+          Value: Ansible
+
+  DBInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId:
+        Fn::FindInMap:
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      KeyName: !Ref keyPair #"mp2019-keypair"
+      SecurityGroupIds : [!Ref DbSGid]
+      InstanceType: !Ref ec2InstanceClass
+      SubnetId: !Ref subnetA
+      Tags:
+        - Key: Name
+          Value: Db
+
+  WebInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId:
+        Fn::FindInMap:
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      KeyName: !Ref keyPair #"mp2019-keypair"
+      SecurityGroupIds : [!Ref WebSGid]
+      InstanceType: !Ref ec2InstanceClass
+      SubnetId: !Ref subnetA
+      Tags:
+        - Key: Name
+          Value: Web

@@ -1,0 +1,4 @@
+---
+- hosts: key_mp2019_keypair
+  roles:
+    - common
