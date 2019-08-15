@@ -2,7 +2,7 @@
 # install MySQL server, make it listen on all interfaces, allow incoming MySQL connections,
 # make sure MySQL server is started and enabled for autostart, and add a database user
 # (use role default variables to store database credentials).
-- name: download MySQL Server RPM
+- name: download MySQL Server RPM -
   get_url:
     url: https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
     dest: ~/mysql57-community-release-el7-11.noarch.rpm
@@ -28,5 +28,5 @@
 - name: add a database user
   become: true
   mysql_user:
-    name: {{ db_user_name }}
-    password: {{ db_user_pass }}
+    name: "{{ db_user_name }}"
+    password: "{{ db_user_pass }}"
