@@ -29,8 +29,9 @@
       - mariadb
       # - mysql-community-server
       # - mysql-devel
-      # - MySQL-python
+      - MySQL-python
     state: present
+  update_cache: yes
   tags: [ 'packages' ]
 
 - name: make mysql listen on all interfaces, allow incoming MySQL connections
