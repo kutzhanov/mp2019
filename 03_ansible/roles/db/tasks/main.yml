@@ -17,6 +17,7 @@
   tags: [ 'packages' ]
 
 - name: install MySQL server
+  become: true
   yum:
     name: mysql-community-server
     state: present
