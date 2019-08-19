@@ -27,7 +27,7 @@
     name:
       - mysql-community-server
       - mysql-devel
-      - gcc
+      - MySQL-python
     state: present
   tags: [ 'packages' ]
 
