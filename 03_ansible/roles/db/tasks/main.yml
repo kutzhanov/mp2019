@@ -42,7 +42,10 @@
 
 - name: start MySQL and make sure it's enabled for autostart
   become: true
-  service: name=mysql state=started enabled=yes
+  service:
+    name: mysql
+    state: started
+    enabled: yes
 
 - name: add a database user
   become: true
