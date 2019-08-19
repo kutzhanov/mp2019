@@ -27,6 +27,7 @@
     name:
       - mysql-community-server
       - mysql-devel
+      - gcc
     state: present
   tags: [ 'packages' ]
 
