@@ -17,7 +17,7 @@
   become: true
   yum:
     name:
-      - mysql56-server
+      - mysql-server
       - mysql-devel
       - MySQL-python
     state: present
