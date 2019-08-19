@@ -2,16 +2,21 @@
 # install MySQL server, make it listen on all interfaces, allow incoming MySQL connections,
 # make sure MySQL server is started and enabled for autostart, and add a database user
 # (use role default variables to store database credentials).
-- name: download MySQL Server RPM -
+- name: download pip
   get_url:
-    url: https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
-    dest: /home/ec2-user/mysql57-community-release-el7-11.noarch.rpm
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: /home/ec2-user/get-pip.py
+  tags: [ 'packages' ]
+
+- name: install pip
+  become: true
+  command: python /home/ec2-user/get-pip.py
+  tags: [ 'packages' ]
 
 - name: download MySQL server RPM
   become: true
   yum:
     name: https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
-  #  name: /home/ec2-user/mysql57-community-release-el7-11.noarch.rpm
     state: present
   #  update_cache: yes
   tags: [ 'packages' ]
@@ -19,7 +24,9 @@
 - name: install MySQL server
   become: true
   yum:
-    name: mysql-community-server
+    name:
+      - mysql-community-server
+      - mysql-devel
     state: present
   tags: [ 'packages' ]
 
