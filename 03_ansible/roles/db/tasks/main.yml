@@ -13,19 +13,11 @@
   command: python /home/ec2-user/get-pip.py
   tags: [ 'packages' ]
 
-#- name: download MySQL server RPM
-#  become: true
-#  yum:
-#    name: https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
-#    state: present
-  #  update_cache: yes
-#  tags: [ 'packages' ]
-
 - name: install MySQL server
   become: true
   yum:
     name:
-      - mysql #-community-server
+      - mysql56-server
       - mysql-devel
       - MySQL-python
     state: present
