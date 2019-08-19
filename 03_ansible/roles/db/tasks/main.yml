@@ -10,7 +10,8 @@
 - name: install MySQL server
   become: true
   yum:
-    name: /home/ec2-user/mysql57-community-release-el7-11.noarch.rpm
+    name: https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+  #  name: /home/ec2-user/mysql57-community-release-el7-11.noarch.rpm
     state: present
   #  update_cache: yes
   tags: [ 'packages' ]
