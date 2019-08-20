@@ -43,7 +43,7 @@
 - name: start MySQL and make sure it's enabled for autostart
   become: true
   service:
-    name: mysql
+    name: mariadb
     state: started
     enabled: yes
 
