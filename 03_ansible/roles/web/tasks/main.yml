@@ -13,7 +13,10 @@
 
 - name: create a simple index.php file to communicate with remote MySQL database
   become: true
-  template: src=index.php.j2 dest=/var/www/html/index.php mode=0644
+  template:
+    src: index.php.j2
+    dest: /var/www/html/index.php
+    mode: 0644
 
 - name: start Apache and make sure it's enabled for autostart
   become: true
