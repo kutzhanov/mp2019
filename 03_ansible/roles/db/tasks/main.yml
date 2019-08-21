@@ -43,18 +43,3 @@
     name: "{{ db_user_name }}"
     password: "{{ db_user_pass }}"
     host: '%'
-
-# - name: create database
-#   become: true
-#   mysql_db:
-#     name: "my_db"
-#     state: present
-#
-# - name: create db user
-#   become: true
-#   mysql_user:
-#     name: "{{ db_user_name }}"
-#     password: "{{ db_user_pass }}"
-#     priv: "mydb.*:ALL"
-#     host: '%'
-#     state: present

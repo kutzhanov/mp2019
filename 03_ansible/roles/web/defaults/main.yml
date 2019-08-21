@@ -1,4 +1,5 @@
 ---
-server_name: ip-192-168-1-83.ec2.internal #myapp
+server_name:  {{ hostvars['tag_Name_Db']['ansible_hostname'] }}
+#ip-192-168-1-83.ec2.internal #myapp
 db_user_name: dbuser
 db_user_pass: dbpass
