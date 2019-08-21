@@ -15,6 +15,10 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 217.196.26.66/32 # Astana office
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 147.30.49.117/32 # home
       Tags:
         - Key: Name
           Value: AnsibleSG
@@ -34,6 +38,10 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 217.196.26.66/32 # Astana office
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 147.30.49.117/32 # home
       Tags:
         - Key: Name
           Value: WebSG
