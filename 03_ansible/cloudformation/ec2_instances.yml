@@ -83,6 +83,29 @@ Resources:
       InstanceType: !Ref ec2InstanceClass
       SubnetId: !Ref subnetA
       IamInstanceProfile: !Ref AnsibleInstanceProfile
+      UserData:
+        Fn::Base64: !Sub
+        # install python, git, ansible, pip and boto packages
+        # clone ansible roles, playbook, dynamic inventory files and ssh keys from the git repository
+          - |
+            #! /bin/bash -xe
+
+            yum -y update
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            python get-pip.py
+            pip install boto
+            amazon-linux-extras install ansible2
+            yum -y install git
+            yum -y install redis
+            service redis start
+            systemctl enable redis
+            pip install redis==2.10.6
+
+            mkdir ansible
+            cd ansible
+            git clone https://github.com/kutzhanov/mp2019.git
+            cd 03_ansible
+
       Tags:
         - Key: Name
           Value: Ansible
