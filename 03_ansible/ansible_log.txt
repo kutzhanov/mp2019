@@ -392,6 +392,9 @@ WHost 'ip-192-168-1-39.ec2.internal' is not allowed to connect to this MariaDB s
 
 mysql --host=192.168.1.130 --protocol=tcp --port=3306 test
 
+*
+fatal: [192.168.1.39]: FAILED! => {"changed": false, "failed": true, "msg": "AnsibleUndefinedVariable: {{ hostvars['tag_Name_Db']['ansible_hostname'] }}: \"hostvars['tag_Name_Db']\" is undefined"}
+
 
 Task 6
 
