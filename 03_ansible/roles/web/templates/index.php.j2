@@ -1,6 +1,6 @@
 <?php
 #$servername = "{{ server_name }}";
-$servername = "{{ hostvars['ec2-3-86-189-255.compute-1.amazonaws.com']['ansible_hostname'] }}";
+$servername = "{{ hostvars['ec2-3-86-189-255.compute-1.amazonaws.com']['ansible_facts']['ansible_hostname'] }}";
 $username = "{{ db_user_name }}";
 $password = "{{ db_user_pass }}";
 $hostname = gethostname();
