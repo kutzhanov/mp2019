@@ -1,5 +1,5 @@
 <?php
-$servername = "{{ hostvars[groups['tag_Name_Db']]['ansible_hostname'] }}";
+$servername = "{{ hostvars[groups['tag_Name_Db'][0]]['ansible_hostname'] }}";
 $username = "{{ db_user_name }}";
 $password = "{{ db_user_pass }}";
 $hostname = gethostname();
