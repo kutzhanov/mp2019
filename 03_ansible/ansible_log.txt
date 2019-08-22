@@ -15,6 +15,8 @@ EC2 key pair name;
 
 EC2 template should have 3 AWS instances based on Amazon Linux 2 AMI with names "ansible", "web" and "db". The instance "ansible" should be attached to instance profile to authenticate dynamic inventory script. Make sure that the security groups assigned properly. For "ansible" instance should be allowed SSH inbound traffic, for "db" instance SSH and MYSQL, and for "web" SSH, HTTP traffic.
 
+aws cloudformation create-stack --stack-name main --template-body file://main.yml --parameters ParameterKey=keyPair,ParameterValue=mp2019-keypair --capabilities CAPABILITY_NAMED_IAM
+
 Task 2
 
 In the ansible instance create folder "ansible" and put two files ec2.ini and ec2.py dynamic inventory into ansible directory. Configure ec2.ini to use private IP addresses and hostnames like db, web, etc. and try to perform next command.
@@ -25,260 +27,260 @@ $ ec2.py --list, it should output the metadata for three instances: ansible, web
 {
   "_meta": {
     "hostvars": {
-      "192.168.1.11": {
-        "ansible_host": "192.168.1.11",
-        "ec2__in_monitoring_element": false,
-        "ec2_account_id": "194400501996",
-        "ec2_ami_launch_index": "0",
-        "ec2_architecture": "x86_64",
+      "192.168.1.104": {
+        "ansible_host": "192.168.1.104", 
+        "ec2__in_monitoring_element": false, 
+        "ec2_account_id": "194400501996", 
+        "ec2_ami_launch_index": "0", 
+        "ec2_architecture": "x86_64", 
         "ec2_block_devices": {
-          "xvda": "vol-0f9674af60c179ff1"
-        },
-        "ec2_client_token": "main-Ansib-2SZP5GX2DP9C",
-        "ec2_dns_name": "ec2-54-175-222-185.compute-1.amazonaws.com",
-        "ec2_ebs_optimized": false,
-        "ec2_eventsSet": "",
-        "ec2_group_name": "",
-        "ec2_hypervisor": "xen",
-        "ec2_id": "i-0e457344d9a1c9563",
-        "ec2_image_id": "ami-0b898040803850657",
-        "ec2_instance_type": "t2.micro",
-        "ec2_ip_address": "54.175.222.185",
-        "ec2_item": "",
-        "ec2_kernel": "",
-        "ec2_key_name": "mp2019-keypair",
-        "ec2_launch_time": "2019-08-08T08:30:19.000Z",
-        "ec2_monitored": false,
-        "ec2_monitoring": "",
-        "ec2_monitoring_state": "disabled",
-        "ec2_persistent": false,
-        "ec2_placement": "us-east-1a",
-        "ec2_platform": "",
-        "ec2_previous_state": "",
-        "ec2_previous_state_code": 0,
-        "ec2_private_dns_name": "ip-192-168-1-11.ec2.internal",
-        "ec2_private_ip_address": "192.168.1.11",
-        "ec2_public_dns_name": "ec2-54-175-222-185.compute-1.amazonaws.com",
-        "ec2_ramdisk": "",
-        "ec2_reason": "",
-        "ec2_region": "us-east-1",
-        "ec2_requester_id": "",
-        "ec2_root_device_name": "/dev/xvda",
-        "ec2_root_device_type": "ebs",
-        "ec2_security_group_ids": "sg-07c935b596fe615e1",
-        "ec2_security_group_names": "AnsibleSG",
-        "ec2_sourceDestCheck": "true",
-        "ec2_spot_instance_request_id": "",
-        "ec2_state": "running",
-        "ec2_state_code": 16,
-        "ec2_state_reason": "",
-        "ec2_subnet_id": "subnet-0a4b6ea29f1746dee",
-        "ec2_tag_Name": "Ansible",
-        "ec2_tag_aws_cloudformation_logical_id": "AnsibleInstance",
-        "ec2_tag_aws_cloudformation_stack_id": "arn:aws:cloudformation:us-east-1:194400501996:stack/main-ec2InstancesStack-5E8COY4COWG5/6a299750-b8db-11e9-a0b3-0a20b68b404c",
-        "ec2_tag_aws_cloudformation_stack_name": "main-ec2InstancesStack-5E8COY4COWG5",
-        "ec2_virtualization_type": "hvm",
-        "ec2_vpc_id": "vpc-0d7b0281f2a21b7af"
-      },
-      "192.168.1.222": {
-        "ansible_host": "192.168.1.222",
-        "ec2__in_monitoring_element": false,
-        "ec2_account_id": "194400501996",
-        "ec2_ami_launch_index": "0",
-        "ec2_architecture": "x86_64",
+          "xvda": "vol-0bc5dcaa4b21913b4"
+        }, 
+        "ec2_client_token": "main-Ansib-123JH0SU34C2N", 
+        "ec2_dns_name": "ec2-3-84-101-143.compute-1.amazonaws.com", 
+        "ec2_ebs_optimized": false, 
+        "ec2_eventsSet": "", 
+        "ec2_group_name": "", 
+        "ec2_hypervisor": "xen", 
+        "ec2_id": "i-03da3a65f583da93c", 
+        "ec2_image_id": "ami-0b898040803850657", 
+        "ec2_instance_type": "t2.micro", 
+        "ec2_ip_address": "3.84.101.143", 
+        "ec2_item": "", 
+        "ec2_kernel": "", 
+        "ec2_key_name": "mp2019-keypair", 
+        "ec2_launch_time": "2019-08-20T08:25:33.000Z", 
+        "ec2_monitored": false, 
+        "ec2_monitoring": "", 
+        "ec2_monitoring_state": "disabled", 
+        "ec2_persistent": false, 
+        "ec2_placement": "us-east-1a", 
+        "ec2_platform": "", 
+        "ec2_previous_state": "", 
+        "ec2_previous_state_code": 0, 
+        "ec2_private_dns_name": "ip-192-168-1-104.ec2.internal", 
+        "ec2_private_ip_address": "192.168.1.104", 
+        "ec2_public_dns_name": "ec2-3-84-101-143.compute-1.amazonaws.com", 
+        "ec2_ramdisk": "", 
+        "ec2_reason": "", 
+        "ec2_region": "us-east-1", 
+        "ec2_requester_id": "", 
+        "ec2_root_device_name": "/dev/xvda", 
+        "ec2_root_device_type": "ebs", 
+        "ec2_security_group_ids": "sg-0ecd2fbf3354cbd77", 
+        "ec2_security_group_names": "AnsibleSG", 
+        "ec2_sourceDestCheck": "true", 
+        "ec2_spot_instance_request_id": "", 
+        "ec2_state": "running", 
+        "ec2_state_code": 16, 
+        "ec2_state_reason": "", 
+        "ec2_subnet_id": "subnet-0f7d783ef38552e95", 
+        "ec2_tag_Name": "Ansible", 
+        "ec2_tag_aws_cloudformation_logical_id": "AnsibleInstance", 
+        "ec2_tag_aws_cloudformation_stack_id": "arn:aws:cloudformation:us-east-1:194400501996:stack/main-ec2InstancesStack-13ZZHXHZOO9FL/bd43a730-c323-11e9-b5b5-123ad236a92a", 
+        "ec2_tag_aws_cloudformation_stack_name": "main-ec2InstancesStack-13ZZHXHZOO9FL", 
+        "ec2_virtualization_type": "hvm", 
+        "ec2_vpc_id": "vpc-0aba274b957e16583"
+      }, 
+      "192.168.1.39": {
+        "ansible_host": "192.168.1.39", 
+        "ec2__in_monitoring_element": false, 
+        "ec2_account_id": "194400501996", 
+        "ec2_ami_launch_index": "0", 
+        "ec2_architecture": "x86_64", 
         "ec2_block_devices": {
-          "xvda": "vol-04d15820cf78f2cd9"
-        },
-        "ec2_client_token": "main-WebIn-16VNOMHT9H2ZY",
-        "ec2_dns_name": "ec2-174-129-169-246.compute-1.amazonaws.com",
-        "ec2_ebs_optimized": false,
-        "ec2_eventsSet": "",
-        "ec2_group_name": "",
-        "ec2_hypervisor": "xen",
-        "ec2_id": "i-0b586e24258a2e4b5",
-        "ec2_image_id": "ami-0b898040803850657",
-        "ec2_instance_profile": "",
-        "ec2_instance_type": "t2.micro",
-        "ec2_ip_address": "174.129.169.246",
-        "ec2_item": "",
-        "ec2_kernel": "",
-        "ec2_key_name": "mp2019-keypair",
-        "ec2_launch_time": "2019-08-08T08:50:05.000Z",
-        "ec2_monitored": false,
-        "ec2_monitoring": "",
-        "ec2_monitoring_state": "disabled",
-        "ec2_persistent": false,
-        "ec2_placement": "us-east-1a",
-        "ec2_platform": "",
-        "ec2_previous_state": "",
-        "ec2_previous_state_code": 0,
-        "ec2_private_dns_name": "ip-192-168-1-222.ec2.internal",
-        "ec2_private_ip_address": "192.168.1.222",
-        "ec2_public_dns_name": "ec2-174-129-169-246.compute-1.amazonaws.com",
-        "ec2_ramdisk": "",
-        "ec2_reason": "",
-        "ec2_region": "us-east-1",
-        "ec2_requester_id": "",
-        "ec2_root_device_name": "/dev/xvda",
-        "ec2_root_device_type": "ebs",
-        "ec2_security_group_ids": "sg-0f22c47a52d12fa5e",
-        "ec2_security_group_names": "WebSG",
-        "ec2_sourceDestCheck": "true",
-        "ec2_spot_instance_request_id": "",
-        "ec2_state": "running",
-        "ec2_state_code": 16,
-        "ec2_state_reason": "",
-        "ec2_subnet_id": "subnet-0a4b6ea29f1746dee",
-        "ec2_tag_Name": "Web",
-        "ec2_tag_aws_cloudformation_logical_id": "WebInstance",
-        "ec2_tag_aws_cloudformation_stack_id": "arn:aws:cloudformation:us-east-1:194400501996:stack/main-ec2InstancesStack-5E8COY4COWG5/6a299750-b8db-11e9-a0b3-0a20b68b404c",
-        "ec2_tag_aws_cloudformation_stack_name": "main-ec2InstancesStack-5E8COY4COWG5",
-        "ec2_virtualization_type": "hvm",
-        "ec2_vpc_id": "vpc-0d7b0281f2a21b7af"
-      },
-      "192.168.1.87": {
-        "ansible_host": "192.168.1.87",
-        "ec2__in_monitoring_element": false,
-        "ec2_account_id": "194400501996",
-        "ec2_ami_launch_index": "0",
-        "ec2_architecture": "x86_64",
+          "xvda": "vol-06ed611333fd22b59"
+        }, 
+        "ec2_client_token": "main-WebIn-BU6DJV5JIQWO", 
+        "ec2_dns_name": "ec2-184-72-106-172.compute-1.amazonaws.com", 
+        "ec2_ebs_optimized": false, 
+        "ec2_eventsSet": "", 
+        "ec2_group_name": "", 
+        "ec2_hypervisor": "xen", 
+        "ec2_id": "i-0f073f0db89a3dae9", 
+        "ec2_image_id": "ami-0b898040803850657", 
+        "ec2_instance_profile": "", 
+        "ec2_instance_type": "t2.micro", 
+        "ec2_ip_address": "184.72.106.172", 
+        "ec2_item": "", 
+        "ec2_kernel": "", 
+        "ec2_key_name": "mp2019-keypair", 
+        "ec2_launch_time": "2019-08-20T08:23:12.000Z", 
+        "ec2_monitored": false, 
+        "ec2_monitoring": "", 
+        "ec2_monitoring_state": "disabled", 
+        "ec2_persistent": false, 
+        "ec2_placement": "us-east-1a", 
+        "ec2_platform": "", 
+        "ec2_previous_state": "", 
+        "ec2_previous_state_code": 0, 
+        "ec2_private_dns_name": "ip-192-168-1-39.ec2.internal", 
+        "ec2_private_ip_address": "192.168.1.39", 
+        "ec2_public_dns_name": "ec2-184-72-106-172.compute-1.amazonaws.com", 
+        "ec2_ramdisk": "", 
+        "ec2_reason": "", 
+        "ec2_region": "us-east-1", 
+        "ec2_requester_id": "", 
+        "ec2_root_device_name": "/dev/xvda", 
+        "ec2_root_device_type": "ebs", 
+        "ec2_security_group_ids": "sg-0baf9ae11146888ee", 
+        "ec2_security_group_names": "WebSG", 
+        "ec2_sourceDestCheck": "true", 
+        "ec2_spot_instance_request_id": "", 
+        "ec2_state": "running", 
+        "ec2_state_code": 16, 
+        "ec2_state_reason": "", 
+        "ec2_subnet_id": "subnet-0f7d783ef38552e95", 
+        "ec2_tag_Name": "Web", 
+        "ec2_tag_aws_cloudformation_logical_id": "WebInstance", 
+        "ec2_tag_aws_cloudformation_stack_id": "arn:aws:cloudformation:us-east-1:194400501996:stack/main-ec2InstancesStack-13ZZHXHZOO9FL/bd43a730-c323-11e9-b5b5-123ad236a92a", 
+        "ec2_tag_aws_cloudformation_stack_name": "main-ec2InstancesStack-13ZZHXHZOO9FL", 
+        "ec2_virtualization_type": "hvm", 
+        "ec2_vpc_id": "vpc-0aba274b957e16583"
+      }, 
+      "192.168.1.83": {
+        "ansible_host": "192.168.1.83", 
+        "ec2__in_monitoring_element": false, 
+        "ec2_account_id": "194400501996", 
+        "ec2_ami_launch_index": "0", 
+        "ec2_architecture": "x86_64", 
         "ec2_block_devices": {
-          "xvda": "vol-022a78f2fd18487c3"
-        },
-        "ec2_client_token": "main-DBIns-2OW2720APLFD",
-        "ec2_dns_name": "ec2-3-92-213-41.compute-1.amazonaws.com",
-        "ec2_ebs_optimized": false,
-        "ec2_eventsSet": "",
-        "ec2_group_name": "",
-        "ec2_hypervisor": "xen",
-        "ec2_id": "i-02deb317f7767a4ee",
-        "ec2_image_id": "ami-0b898040803850657",
-        "ec2_instance_profile": "",
-        "ec2_instance_type": "t2.micro",
-        "ec2_ip_address": "3.92.213.41",
-        "ec2_item": "",
-        "ec2_kernel": "",
-        "ec2_key_name": "mp2019-keypair",
-        "ec2_launch_time": "2019-08-08T08:50:05.000Z",
-        "ec2_monitored": false,
-        "ec2_monitoring": "",
-        "ec2_monitoring_state": "disabled",
-        "ec2_persistent": false,
-        "ec2_placement": "us-east-1a",
-        "ec2_platform": "",
-        "ec2_previous_state": "",
-        "ec2_previous_state_code": 0,
-        "ec2_private_dns_name": "ip-192-168-1-87.ec2.internal",
-        "ec2_private_ip_address": "192.168.1.87",
-        "ec2_public_dns_name": "ec2-3-92-213-41.compute-1.amazonaws.com",
-        "ec2_ramdisk": "",
-        "ec2_reason": "",
-        "ec2_region": "us-east-1",
-        "ec2_requester_id": "",
-        "ec2_root_device_name": "/dev/xvda",
-        "ec2_root_device_type": "ebs",
-        "ec2_security_group_ids": "sg-00dfe7bddf16447a4",
-        "ec2_security_group_names": "DbSG",
-        "ec2_sourceDestCheck": "true",
-        "ec2_spot_instance_request_id": "",
-        "ec2_state": "running",
-        "ec2_state_code": 16,
-        "ec2_state_reason": "",
-        "ec2_subnet_id": "subnet-0a4b6ea29f1746dee",
-        "ec2_tag_Name": "Db",
-        "ec2_tag_aws_cloudformation_logical_id": "DBInstance",
-        "ec2_tag_aws_cloudformation_stack_id": "arn:aws:cloudformation:us-east-1:194400501996:stack/main-ec2InstancesStack-5E8COY4COWG5/6a299750-b8db-11e9-a0b3-0a20b68b404c",
-        "ec2_tag_aws_cloudformation_stack_name": "main-ec2InstancesStack-5E8COY4COWG5",
-        "ec2_virtualization_type": "hvm",
-        "ec2_vpc_id": "vpc-0d7b0281f2a21b7af"
+          "xvda": "vol-05997cd07f36253d9"
+        }, 
+        "ec2_client_token": "main-DBIns-B5RVC636YJUR", 
+        "ec2_dns_name": "ec2-54-165-176-106.compute-1.amazonaws.com", 
+        "ec2_ebs_optimized": false, 
+        "ec2_eventsSet": "", 
+        "ec2_group_name": "", 
+        "ec2_hypervisor": "xen", 
+        "ec2_id": "i-0c0798d1b0709b5ad", 
+        "ec2_image_id": "ami-0b898040803850657", 
+        "ec2_instance_profile": "", 
+        "ec2_instance_type": "t2.micro", 
+        "ec2_ip_address": "54.165.176.106", 
+        "ec2_item": "", 
+        "ec2_kernel": "", 
+        "ec2_key_name": "mp2019-keypair", 
+        "ec2_launch_time": "2019-08-20T08:23:12.000Z", 
+        "ec2_monitored": false, 
+        "ec2_monitoring": "", 
+        "ec2_monitoring_state": "disabled", 
+        "ec2_persistent": false, 
+        "ec2_placement": "us-east-1a", 
+        "ec2_platform": "", 
+        "ec2_previous_state": "", 
+        "ec2_previous_state_code": 0, 
+        "ec2_private_dns_name": "ip-192-168-1-83.ec2.internal", 
+        "ec2_private_ip_address": "192.168.1.83", 
+        "ec2_public_dns_name": "ec2-54-165-176-106.compute-1.amazonaws.com", 
+        "ec2_ramdisk": "", 
+        "ec2_reason": "", 
+        "ec2_region": "us-east-1", 
+        "ec2_requester_id": "", 
+        "ec2_root_device_name": "/dev/xvda", 
+        "ec2_root_device_type": "ebs", 
+        "ec2_security_group_ids": "sg-0bcd12b11acd3a2d2", 
+        "ec2_security_group_names": "DbSG", 
+        "ec2_sourceDestCheck": "true", 
+        "ec2_spot_instance_request_id": "", 
+        "ec2_state": "running", 
+        "ec2_state_code": 16, 
+        "ec2_state_reason": "", 
+        "ec2_subnet_id": "subnet-0f7d783ef38552e95", 
+        "ec2_tag_Name": "Db", 
+        "ec2_tag_aws_cloudformation_logical_id": "DBInstance", 
+        "ec2_tag_aws_cloudformation_stack_id": "arn:aws:cloudformation:us-east-1:194400501996:stack/main-ec2InstancesStack-13ZZHXHZOO9FL/bd43a730-c323-11e9-b5b5-123ad236a92a", 
+        "ec2_tag_aws_cloudformation_stack_name": "main-ec2InstancesStack-13ZZHXHZOO9FL", 
+        "ec2_virtualization_type": "hvm", 
+        "ec2_vpc_id": "vpc-0aba274b957e16583"
       }
     }
-  },
+  }, 
   "ami_0b898040803850657": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
-  ],
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
+  ], 
   "ec2": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
-  ],
-  "i-02deb317f7767a4ee": [
-    "192.168.1.87"
-  ],
-  "i-0b586e24258a2e4b5": [
-    "192.168.1.222"
-  ],
-  "i-0e457344d9a1c9563": [
-    "192.168.1.11"
-  ],
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
+  ], 
+  "i-03da3a65f583da93c": [
+    "192.168.1.104"
+  ], 
+  "i-0c0798d1b0709b5ad": [
+    "192.168.1.83"
+  ], 
+  "i-0f073f0db89a3dae9": [
+    "192.168.1.39"
+  ], 
   "key_mp2019_keypair": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
-  ],
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
+  ], 
   "platform_undefined": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
-  ],
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
+  ], 
   "security_group_AnsibleSG": [
-    "192.168.1.11"
-  ],
+    "192.168.1.104"
+  ], 
   "security_group_DbSG": [
-    "192.168.1.87"
-  ],
+    "192.168.1.83"
+  ], 
   "security_group_WebSG": [
-    "192.168.1.222"
-  ],
+    "192.168.1.39"
+  ], 
   "tag_Name_Ansible": [
-    "192.168.1.11"
-  ],
+    "192.168.1.104"
+  ], 
   "tag_Name_Db": [
-    "192.168.1.87"
-  ],
+    "192.168.1.83"
+  ], 
   "tag_Name_Web": [
-    "192.168.1.222"
-  ],
+    "192.168.1.39"
+  ], 
   "tag_aws_cloudformation_logical_id_AnsibleInstance": [
-    "192.168.1.11"
-  ],
+    "192.168.1.104"
+  ], 
   "tag_aws_cloudformation_logical_id_DBInstance": [
-    "192.168.1.87"
-  ],
+    "192.168.1.83"
+  ], 
   "tag_aws_cloudformation_logical_id_WebInstance": [
-    "192.168.1.222"
-  ],
-  "tag_aws_cloudformation_stack_id_arn_aws_cloudformation_us_east_1_194400501996_stack_main_ec2InstancesStack_5E8COY4COWG5_6a299750_b8db_11e9_a0b3_0a20b68b404c": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
-  ],
-  "tag_aws_cloudformation_stack_name_main_ec2InstancesStack_5E8COY4COWG5": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
-  ],
+    "192.168.1.39"
+  ], 
+  "tag_aws_cloudformation_stack_id_arn_aws_cloudformation_us_east_1_194400501996_stack_main_ec2InstancesStack_13ZZHXHZOO9FL_bd43a730_c323_11e9_b5b5_123ad236a92a": [
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
+  ], 
+  "tag_aws_cloudformation_stack_name_main_ec2InstancesStack_13ZZHXHZOO9FL": [
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
+  ], 
   "type_t2_micro": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
-  ],
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
+  ], 
   "us-east-1": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
-  ],
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
+  ], 
   "us-east-1a": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
-  ],
-  "vpc_id_vpc_0d7b0281f2a21b7af": [
-    "192.168.1.87",
-    "192.168.1.222",
-    "192.168.1.11"
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
+  ], 
+  "vpc_id_vpc_0aba274b957e16583": [
+    "192.168.1.39", 
+    "192.168.1.83", 
+    "192.168.1.104"
   ]
 }
 
@@ -289,33 +291,106 @@ Create an Ansible role called "common". It should customize the bash prompt in s
 ansible-galaxy init common
 ansible-playbook common.yml --syntax-check -i ec2.py
 
-ansible-playbook common.yml -i ec2.py
+ansible-playbook common.yml -i ec2.py 
 
-PLAY [key_mp2019_keypair] ***********************************************************************************************************************************
+PLAY [key_mp2019_keypair] ************************************************************************************************************************************
 
-TASK [Gathering Facts] **************************************************************************************************************************************
-ok: [192.168.1.222]
-ok: [192.168.1.87]
-ok: [192.168.1.11]
+TASK [Gathering Facts] ***************************************************************************************************************************************
+ok: [192.168.1.83]
+ok: [192.168.1.39]
+ok: [192.168.1.104]
 
-TASK [common : customize the bash prompt in some way for 3 instances ansible, db, web] **********************************************************************
-changed: [192.168.1.222]
-changed: [192.168.1.87]
-changed: [192.168.1.11]
+TASK [common : customize the bash prompt in some way for 3 instances ansible, db, web] ***********************************************************************
+changed: [192.168.1.39]
+changed: [192.168.1.83]
+changed: [192.168.1.104]
 
-PLAY RECAP **************************************************************************************************************************************************
-192.168.1.11               : ok=2    changed=1    unreachable=0    failed=0
-192.168.1.222              : ok=2    changed=1    unreachable=0    failed=0
-192.168.1.87               : ok=2    changed=1    unreachable=0    failed=0
+PLAY RECAP ***************************************************************************************************************************************************
+192.168.1.104              : ok=2    changed=1    unreachable=0    failed=0   
+192.168.1.39               : ok=2    changed=1    unreachable=0    failed=0   
+192.168.1.83               : ok=2    changed=1    unreachable=0    failed=0
 
 
 Task 4
 Create an Ansible role called "web". It should install Apache/php, create a simple index.php file to communicate with remote MySQL database (use template for that and have the database credentials stored in role default variables), start Apache and make sure it's enabled for autostart. 
 
+ansible-playbook web.yml -i ec2.py 
+
+PLAY [tag_Name_Web] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] ***************************************************************************************************************************************
+ok: [192.168.1.39]
+
+TASK [web : install Apache and php] **************************************************************************************************************************
+ok: [192.168.1.39] => (item=[u'httpd', u'php', u'php-mysql'])
+
+TASK [web : create a simple index.php file to communicate with remote MySQL database] ************************************************************************
+changed: [192.168.1.39]
+
+TASK [web : start Apache and make sure it's enabled for autostart] *******************************************************************************************
+changed: [192.168.1.39]
+
+PLAY RECAP ***************************************************************************************************************************************************
+192.168.1.39               : ok=4    changed=2    unreachable=0    failed=0
+
 
 Task 5
 
 Create an Ansible role called "db". It should install MySQL server, make it listen on all interfaces, allow incoming MySQL connections, make sure MySQL server is started and enabled for autostart, and add a database user (use role default variables to store database credentials).
+
+ansible-playbook db.yml -i ec2.py 
+
+PLAY [tag_Name_Db] *******************************************************************************************************************************************
+
+TASK [Gathering Facts] ***************************************************************************************************************************************
+ok: [192.168.1.83]
+
+TASK [db : download pip] *************************************************************************************************************************************
+ok: [192.168.1.83]
+
+TASK [db : install pip] **************************************************************************************************************************************
+changed: [192.168.1.83]
+
+TASK [db : install MariaDB server] ***************************************************************************************************************************
+ok: [192.168.1.83]
+
+TASK [db : make MariaDB listen on all interfaces, allow incoming MariaDB connections] ************************************************************************
+ok: [192.168.1.83]
+
+TASK [db : start MariaDB and make sure it's enabled for autostart] *******************************************************************************************
+ok: [192.168.1.83]
+
+TASK [db : add a database user] ******************************************************************************************************************************
+changed: [192.168.1.83]
+
+PLAY RECAP ***************************************************************************************************************************************************
+192.168.1.83               : ok=7    changed=2    unreachable=0    failed=0
+
+
+TASK [db : add a database user] *****************************************************************************
+fatal: [192.168.1.87]: FAILED! => {"changed": false, "failed": true, "msg": "unable to connect to database, check login_user and login_password are correct or /root/.my.cnf has the credentials. Exception message: (1045, \"Access denied for user 'root'@'localhost' (using password: NO)\")"}
+
+TASK [db : add a database user] ******************************************************************************************************************************
+fatal: [192.168.1.87]: FAILED! => {"changed": false, "failed": true, "msg": "unable to connect to database, check login_user and login_password are correct or /root/.my.cnf has the credentials. Exception message: (2059, \"Authentication plugin 'caching_sha2_password' cannot be loaded: /usr/lib64/mysql/plugin/caching_sha2_password.so: cannot open shared object file: No such file or directory\")"}
+
+TASK [db : start MySQL and make sure it's enabled for autostart] *********************************************************************************************
+fatal: [192.168.1.180]: FAILED! => {"changed": false, "failed": true, "msg": "Could not find the requested service mysql: host"}
+	to retry, use: --limit @/home/ec2-user/ansible/mp2019/03_ansible/db.retry
+
+TASK [db : add a database user] ******************************************************************************************************************************
+changed: [192.168.1.83]
+
+RUNNING HANDLER [db : restart mariadb] ***********************************************************************************************************************
+fatal: [192.168.1.83]: FAILED! => {"changed": false, "failed": true, "msg": "Unable to restart service mariadb: Failed to restart mariadb.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files\nSee system logs and 'systemctl status mariadb.service' for details.\n"}
+
+
+[ec2-user@ip-192-168-1-39:~] tim Wed Aug 21 $telnet 192.168.1.83 3306
+Trying 192.168.1.83...
+Connected to 192.168.1.83.
+Escape character is '^]'.
+WHost 'ip-192-168-1-39.ec2.internal' is not allowed to connect to this MariaDB serverConnection closed by foreign host.
+
+mysql --host=192.168.1.130 --protocol=tcp --port=3306 test
 
 
 Task 6
