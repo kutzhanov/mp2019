@@ -1,6 +1,6 @@
 ---
 #server_name:  "{{ hostvars['tag_Name_Db']['ansible_facts']['ansible_hostname'] }}"
-server_name:  "{{ hostvars['tag_Name_Db'].ansible_hostname }}"
+server_name:  "{{ hostvars['tag_Name_Db']['ansible_hostname'] }}"
 #              {{ hostvars['asdf.example.com']['ansible_facts']['os_family'] }}
 #ip-192-168-1-83.ec2.internal #myapp
 db_user_name: dbuser
