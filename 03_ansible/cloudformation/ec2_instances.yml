@@ -90,16 +90,16 @@ Resources:
           - |
             #! /bin/bash -xe
 
-            yum -y update
+            sudo yum -y update
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            python get-pip.py
-            pip install boto
-            amazon-linux-extras install ansible2
-            yum -y install git
-            yum -y install redis
-            service redis start
-            systemctl enable redis
-            pip install redis==2.10.6
+            sudo python get-pip.py
+            sudo pip install boto
+            sudo amazon-linux-extras install ansible2
+            sudo yum -y install git
+            sudo yum -y install redis
+            sudo service redis start
+            sudo systemctl enable redis
+            sudo pip install redis==2.10.6
 
             mkdir ansible
             cd ansible
@@ -107,6 +107,7 @@ Resources:
             cp ~/ansible/mp2019/03_ansible/kutzhanov_rsa.pub ~/.ssh/id_rsa.pub
             cp ~/ansible/mp2019/03_ansible/kutzhanov_rsa ~/.ssh/id_rsa
             echo ~/ansible/mp2019/03_ansible/kutzhanov_rsa.pub >> ~/.ssh/authorized_keys
+          - {}
       Tags:
         - Key: Name
           Value: Ansible
@@ -130,6 +131,7 @@ Resources:
             #! /bin/bash -xe
 
             echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> ~/.ssh/authorized_keys
+          - {}
       Tags:
         - Key: Name
           Value: Db
@@ -153,6 +155,7 @@ Resources:
             #! /bin/bash -xe
 
             echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> ~/.ssh/authorized_keys
+          - {}
       Tags:
         - Key: Name
           Value: Web
