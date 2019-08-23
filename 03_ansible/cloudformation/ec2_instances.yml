@@ -123,6 +123,13 @@ Resources:
       SecurityGroupIds : [!Ref DbSGid]
       InstanceType: !Ref ec2InstanceClass
       SubnetId: !Ref subnetA
+      UserData:
+        Fn::Base64: !Sub
+        # apply public ssh key for ansible connection.
+          - |
+            #! /bin/bash -xe
+
+            echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> ~/.ssh/authorized_keys
       Tags:
         - Key: Name
           Value: Db
@@ -139,6 +146,13 @@ Resources:
       SecurityGroupIds : [!Ref WebSGid]
       InstanceType: !Ref ec2InstanceClass
       SubnetId: !Ref subnetA
+      UserData:
+        Fn::Base64: !Sub
+        # apply public ssh key for ansible connection.
+          - |
+            #! /bin/bash -xe
+
+            echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> ~/.ssh/authorized_keys
       Tags:
         - Key: Name
           Value: Web
