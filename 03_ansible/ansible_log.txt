@@ -15,7 +15,7 @@ EC2 key pair name;
 
 EC2 template should have 3 AWS instances based on Amazon Linux 2 AMI with names "ansible", "web" and "db". The instance "ansible" should be attached to instance profile to authenticate dynamic inventory script. Make sure that the security groups assigned properly. For "ansible" instance should be allowed SSH inbound traffic, for "db" instance SSH and MYSQL, and for "web" SSH, HTTP traffic.
 
-aws cloudformation create-stack --stack-name main --template-body file://main.yml --parameters ParameterKey=keyPair,ParameterValue=mp2019-keypair --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name main2 --template-body file://cloudformation/main.yml --parameters ParameterKey=keyPair,ParameterValue=mp2019-keypair --capabilities CAPABILITY_NAMED_IAM
 
 Task 2
 
@@ -419,13 +419,10 @@ Add UserData sript to the CloudFormation EC2 template created on the task 1.
 
 Yerkebulan, 11:08 PM
 Еще вопрос. Седьмая таска. "clone ansible roles, playbook, dynamic inventory files and ssh keys from the git repository". Закрытый ключ храним в гит-е, правильно?
-
 Alina, 11:09 PM
 Да, что бы можно было повторить у ментора в аккаунте. Ключ желательно создать новый, только для этого проекта в целях безопастности 
-
 Yerkebulan, 11:12 PM
 А задание пятое, Алина. "add a database user (use role default variables to store database credentials)". Логин/пароль хардкодим в роли, правильно?
-
 Alina, 11:13 PM
 Да но не в роли, а в инвентори, что бы можно было использовать эти креды в другой роли
 

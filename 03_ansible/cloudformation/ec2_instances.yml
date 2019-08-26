@@ -83,31 +83,32 @@ Resources:
       InstanceType: !Ref ec2InstanceClass
       SubnetId: !Ref subnetA
       IamInstanceProfile: !Ref AnsibleInstanceProfile
+      # install python, git, ansible, pip and boto packages
+      # clone ansible roles, playbook, dynamic inventory files and ssh keys from the git repository
       UserData:
         Fn::Base64: !Sub
-        # install python, git, ansible, pip and boto packages
-        # clone ansible roles, playbook, dynamic inventory files and ssh keys from the git repository
           - |
-            #! /bin/bash -xe
-
-            sudo yum -y update
+            #!/usr/bin/bash
+            echo \"---------START----------\"
+            yum update -y aws-cfn-bootstrap
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            sudo python get-pip.py
-            sudo pip install boto
-            sudo amazon-linux-extras install ansible2
-            sudo yum -y install git
-            sudo yum -y install redis
-            sudo service redis start
-            sudo systemctl enable redis
-            sudo pip install redis==2.10.6
+            python get-pip.py
+            pip install boto
+            amazon-linux-extras install ansible2
+            yum -y install git
+            yum -y install redis
+            service redis start
+            systemctl enable redis
+            pip install redis==2.10.6
+
+            cp ~/ansible/mp2019/03_ansible/kutzhanov_rsa.pub ~/.ssh/id_rsa.pub
+            cp ~/ansible/mp2019/03_ansible/kutzhanov_rsa ~/.ssh/id_rsa
+            echo ~/ansible/mp2019/03_ansible/kutzhanov_rsa.pub >> ~/.ssh/authorized_keys
 
             mkdir ansible
             cd ansible
             git clone https://github.com/kutzhanov/mp2019.git
-            cp ~/ansible/mp2019/03_ansible/kutzhanov_rsa.pub ~/.ssh/id_rsa.pub
-            cp ~/ansible/mp2019/03_ansible/kutzhanov_rsa ~/.ssh/id_rsa
-            echo ~/ansible/mp2019/03_ansible/kutzhanov_rsa.pub >> ~/.ssh/authorized_keys
-          - {}
+            echo \"---------FINISH----------\"
       Tags:
         - Key: Name
           Value: Ansible
@@ -124,14 +125,12 @@ Resources:
       SecurityGroupIds : [!Ref DbSGid]
       InstanceType: !Ref ec2InstanceClass
       SubnetId: !Ref subnetA
+      # apply public ssh key for ansible connection
       UserData:
         Fn::Base64: !Sub
-        # apply public ssh key for ansible connection.
           - |
-            #! /bin/bash -xe
-
-            echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> ~/.ssh/authorized_keys
-          - {}
+            #!/usr/bin/bash
+            echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> /home/ec2-user/.ssh/authorized_keys
       Tags:
         - Key: Name
           Value: Db
@@ -148,14 +147,12 @@ Resources:
       SecurityGroupIds : [!Ref WebSGid]
       InstanceType: !Ref ec2InstanceClass
       SubnetId: !Ref subnetA
+      # apply public ssh key for ansible connection
       UserData:
         Fn::Base64: !Sub
-        # apply public ssh key for ansible connection.
           - |
-            #! /bin/bash -xe
-
-            echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> ~/.ssh/authorized_keys
-          - {}
+            #!/usr/bin/bash
+            echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> /home/ec2-user/.ssh/authorized_keys
       Tags:
         - Key: Name
           Value: Web
