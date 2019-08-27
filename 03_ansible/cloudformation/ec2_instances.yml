@@ -76,7 +76,7 @@ Resources:
       AWS::CloudFormation::Init:
         config:
           sources:
-            /etc/ansible: "https://kutzhanov-backup.s3.amazonaws.com/ansible/ansible.cfg"
+            /etc/ansible: "https://kutzhanov-backup.s3.amazonaws.com/ansible/ansible.tar.gz"
     Properties:
       ImageId:
         Fn::FindInMap:
