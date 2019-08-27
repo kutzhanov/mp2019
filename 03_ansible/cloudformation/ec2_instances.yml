@@ -111,6 +111,11 @@ Resources:
           cat /home/ec2-user/ansible/mp2019/03_ansible/kutzhanov_rsa.pub >> /home/ec2-user/.ssh/authorized_keys
 
           echo \"---------FINISH----------\"
+      Metadata:
+        AWS::CloudFormation::Init:
+          config:
+            sources:
+              /etc/ansible: https://kutzhanov-backup.s3.amazonaws.com/ansible/ansible.cfg
       Tags:
         - Key: Name
           Value: Ansible

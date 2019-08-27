@@ -11,14 +11,6 @@
     - php-mysql
   tags: [ 'packages' ]
 
-- name: configure fact caching using redis
-  become: true
-  template:
-    src: ansible.cfg.j2
-    dest: /ect/ansible/ansible.cfg
-    mode: 0644
-  tags: [ 'configure' ]
-
 - name: create a simple index.php file to communicate with remote MySQL database
   become: true
   template:
