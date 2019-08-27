@@ -27,7 +27,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: for web SSH, HTTP traffic
-      GroupName: MP2019_Ansible
+      GroupName: MP2019_Web
       VpcId: !Ref VPCid
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -50,7 +50,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: for db instance SSH and MYSQL
-      GroupName: MP2019_Ansible
+      GroupName: MP2019_Db
       VpcId: !Ref VPCid
       SecurityGroupIngress:
         - IpProtocol: tcp

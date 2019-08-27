@@ -15,7 +15,7 @@ EC2 key pair name;
 
 EC2 template should have 3 AWS instances based on Amazon Linux 2 AMI with names "ansible", "web" and "db". The instance "ansible" should be attached to instance profile to authenticate dynamic inventory script. Make sure that the security groups assigned properly. For "ansible" instance should be allowed SSH inbound traffic, for "db" instance SSH and MYSQL, and for "web" SSH, HTTP traffic.
 
-aws cloudformation create-stack --stack-name main2 --template-body file://cloudformation/main.yml --parameters ParameterKey=keyPair,ParameterValue=mp2019-keypair --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name main --template-body file://cloudformation/main.yml --parameters ParameterKey=keyPair,ParameterValue=mp2019-keypair --capabilities CAPABILITY_NAMED_IAM
 
 Task 2
 
@@ -401,6 +401,8 @@ fatal: [192.168.1.39]: FAILED! => {"changed": false, "failed": true, "msg": "Ans
 $servername = "{{ hostvars[tag_Name_Db]['ansible_hostname'][0] }}";
 $servername = "{{ hostvars[groups['tag_Name_Db'][0]]['ansible_hostname'] }}";
 
+
+MP2019_Ansible already exists in stack arn:aws:cloudformation:us-east-1:194400501996:stack/main-SecurityGroupsStack-18YD9HJOM4UBL/882e7570-c891-11e9-8266-0ae81055537e
 
 Task 6
 
