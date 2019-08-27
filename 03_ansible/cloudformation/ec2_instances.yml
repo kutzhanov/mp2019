@@ -90,7 +90,7 @@ Resources:
           #!/usr/bin/bash
           echo \"---------START----------\"
           yum update -y
-          sudo ec2-user
+          su ec2-user
           cd /home/ec2-user
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           sudo python get-pip.py
