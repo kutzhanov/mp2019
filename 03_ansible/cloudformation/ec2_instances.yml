@@ -72,6 +72,11 @@ Resources:
   AnsibleInstance:
     # The instance "ansible" should be attached to instance profile to authenticate dynamic inventory script.
     Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          sources:
+            /etc/ansible: "https://kutzhanov-backup.s3.amazonaws.com/ansible/ansible.cfg"
     Properties:
       ImageId:
         Fn::FindInMap:
@@ -105,17 +110,13 @@ Resources:
           mkdir ansible
           cd ansible
           git clone https://github.com/kutzhanov/mp2019.git
+          chown -R ec2-user:ec2-user /home/ec2-user/ansible
 
           cp /home/ec2-user/ansible/mp2019/03_ansible/kutzhanov_rsa.pub /home/ec2-user/.ssh/id_rsa.pub
           cp /home/ec2-user/ansible/mp2019/03_ansible/kutzhanov_rsa /home/ec2-user/.ssh/id_rsa
           cat /home/ec2-user/ansible/mp2019/03_ansible/kutzhanov_rsa.pub >> /home/ec2-user/.ssh/authorized_keys
 
           echo \"---------FINISH----------\"
-      Metadata:
-        AWS::CloudFormation::Init:
-          config:
-            sources:
-              /etc/ansible: https://kutzhanov-backup.s3.amazonaws.com/ansible/ansible.cfg
       Tags:
         - Key: Name
           Value: Ansible
