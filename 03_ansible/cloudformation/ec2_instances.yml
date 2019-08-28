@@ -70,13 +70,7 @@ Resources:
       Roles: [!Ref AnsibleRole]
 
   AnsibleInstance:
-    # The instance "ansible" should be attached to instance profile to authenticate dynamic inventory script.
     Type: AWS::EC2::Instance
-    Metadata:
-      AWS::CloudFormation::Init:
-        config:
-          sources:
-            /etc/ansible: "https://kutzhanov-backup.s3.amazonaws.com/ansible/ansible.tar"
     Properties:
       ImageId:
         Fn::FindInMap:
@@ -87,6 +81,7 @@ Resources:
       SecurityGroupIds: [!Ref AnsibleSGid]
       InstanceType: !Ref ec2InstanceClass
       SubnetId: !Ref subnetA
+      # The instance "ansible" should be attached to instance profile to authenticate dynamic inventory script.
       IamInstanceProfile: !Ref AnsibleInstanceProfile
       # install python, git, ansible, pip and boto packages
       # clone ansible roles, playbook, dynamic inventory files and ssh keys from the git repository
@@ -101,6 +96,8 @@ Resources:
           sudo python get-pip.py
           sudo pip install boto
           sudo amazon-linux-extras install ansible2
+          curl https://kutzhanov-backup.s3.amazonaws.com/ansible/ansible.cfg -o ansible.cfg
+          sudo cp ansible.cfg /etc/ansible/ansible.cfg
           sudo yum -y install git
           sudo amazon-linux-extras install redis4.0
           sudo pip install redis==2.10.6
