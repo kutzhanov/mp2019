@@ -404,6 +404,10 @@ $servername = "{{ hostvars[groups['tag_Name_Db'][0]]['ansible_hostname'] }}";
 
 MP2019_Ansible already exists in stack arn:aws:cloudformation:us-east-1:194400501996:stack/main-SecurityGroupsStack-18YD9HJOM4UBL/882e7570-c891-11e9-8266-0ae81055537e
 
+RUNNING HANDLER [db : restart mariadb] ***********************************************************************************************************************
+fatal: [192.168.1.108]: FAILED! => {"changed": false, "failed": true, "msg": "Unable to restart service mariadb: Failed to restart mariadb.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files\nSee system logs and 'systemctl status mariadb.service' for details.\n"}
+  to retry, use: --limit @/home/ec2-user/ansible/mp2019/03_ansible/db.retry
+
 Task 6
 
 Create an Ansible playbook to apply "web" role to "web" instance, "db" role to "db" instance, and "common" role to all hosts.
