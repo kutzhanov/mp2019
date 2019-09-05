@@ -11,6 +11,9 @@ Parameters:
   EC2SG:
     Description: "security group IDs for EC2 instances"
     Type: String
+  DockerSG:
+    Description: "security group IDs for Docker"
+    Type: String
   ec2InstanceClass:
     Description: "EC2 instance class (a list of allowed values must be pre-defined, t2.micro being the default);"
     Type: String
@@ -104,7 +107,7 @@ Resources:
           - !Ref AWS::Region
           - AMI
       InstanceType: !Ref ec2InstanceClass
-      SecurityGroups: [!Ref EC2SG]
+      SecurityGroups: [!Ref EC2SG, !Ref DockerSG]
 
       # include 's3-access-profile' instance profile into ASG Lunch Configuration
       IamInstanceProfile: !Ref S3AccessProfile

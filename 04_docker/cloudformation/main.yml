@@ -22,41 +22,18 @@ Parameters:
   minInstance:
     Description: "minimum ASG instance count (a default value must be pre-defined)"
     Type: Number
-    Default: 1
+    Default: 3
   maxInstance:
     Description: "maximum ASG instance count (a default value must be pre-defined)"
     Type: Number
-    Default: 1
+    Default: 3
   keyPair:
     Description: "EC2 key pair name"
     Type: String
-  DBInstanceClass:
-    Description: "RDS instance class (a list of allowed values must be pre-defined)"
+  S3BucketName:
+    Description: "S3 bucket name"
     Type: String
-    Default: db.t2.micro
-    AllowedValues:
-      - db.t2.micro
-      - db.m1.small
-      - db.m1.large
-  SlowQueryLog:
-    Description: "MySQL slow_query_log setting (allowed values: 0 or 1)"
-    Type: Number
-    AllowedValues:
-      - 0
-      - 1
-  DBUsername:
-    Description: "database username"
-    Type: String
-    MinLength: 4
-    MaxLength: 15
-    AllowedPattern: ^[a-zA-Z0-9]*$
-  DBPassword:
-    NoEcho: true
-    Description: "database password (this value must not be visible when entered during stack creation)"
-    Type: String
-    MinLength: 5
-    MaxLength: 10
-    AllowedPattern: ^[a-zA-Z0-9]*$
+
 Resources:
   NetworkingStack:
     Type: AWS::CloudFormation::Stack
@@ -65,43 +42,45 @@ Resources:
         cidrBlock: !Ref cidrBlock
         cidrBlockSubnetA: !Ref cidrBlockSubnetA
         cidrBlockSubnetB: !Ref cidrBlockSubnetB
-      TemplateURL: https://kutzhanov-backup.s3.amazonaws.com/cloudformation/networking.yml
+      TemplateURL:
+        !Join
+          - ''
+          - - 'https://'
+            - !Ref S3BucketName
+            - '.s3.amazonaws.com/cf_templates/networking.yml'
+
   SecurityGroupsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         VPCid: !GetAtt NetworkingStack.Outputs.VPCid
-      TemplateURL: https://kutzhanov-backup.s3.amazonaws.com/cloudformation/security_groups.yml
-  DatabaseStack:
+      TemplateURL:
+        !Join
+          - ''
+          - - 'https://'
+            - !Ref S3BucketName
+            - '.s3.amazonaws.com/cf_templates/security_groups.yml'
+
+  DockerStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         subnetA: !GetAtt NetworkingStack.Outputs.subnetAid
         subnetB: !GetAtt NetworkingStack.Outputs.subnetBid
-        AdminSGid: !GetAtt SecurityGroupsStack.Outputs.AdminSGid
-        RDSSGid: !GetAtt SecurityGroupsStack.Outputs.RDSSGid
-        DBInstanceClass: !Ref DBInstanceClass
-        SlowQueryLog: !Ref SlowQueryLog
-        DBUsername: !Ref DBUsername
-        DBPassword: !Ref DBPassword
-      TemplateURL: https://kutzhanov-backup.s3.amazonaws.com/cloudformation/database.yml
-  WebStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        subnetA: !GetAtt NetworkingStack.Outputs.subnetAid
-        subnetB: !GetAtt NetworkingStack.Outputs.subnetBid
-        ELBSG: !GetAtt SecurityGroupsStack.Outputs.ELBSGid
         EC2SG: !GetAtt SecurityGroupsStack.Outputs.EC2SGid
+        DockerSG: !GetAtt SecurityGroupsStack.Outputs.DockerSGid
         ec2InstanceClass: !Ref ec2InstanceClass
         minInstance: !Ref minInstance
         maxInstance: !Ref maxInstance
         keyPair: !Ref keyPair
-        RDSendpoint: !GetAtt DatabaseStack.Outputs.RDSendpoint
-        DBUsername: !Ref DBUsername
-        DBPassword: !Ref DBPassword
-      TemplateURL: https://kutzhanov-backup.s3.amazonaws.com/cloudformation/web.yml
-Outputs:
-  ELBdomain:
-    Description: ELB domain name
-    Value: !GetAtt WebStack.Outputs.ELBdomain
+      TemplateURL:
+        !Join
+          - ''
+          - - 'https://'
+            - !Ref S3BucketName
+            - '.s3.amazonaws.com/cf_templates/docker-nodes.yml'
+
+#Outputs:
+#  ELBdomain:
+#    Description: ELB domain name
+#    Value: !GetAtt WebStack.Outputs.ELBdomain
