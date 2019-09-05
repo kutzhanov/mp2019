@@ -1,0 +1,143 @@
+Parameters:
+  subnetA:
+    Description: "ID of subnet A"
+    Type: String
+  subnetB:
+    Description: "ID of subnet B"
+    Type: String
+  S3BucketName:
+    Description: "S3 bucket name"
+    Type: String
+  EC2SG:
+    Description: "security group IDs for EC2 instances"
+    Type: String
+  ec2InstanceClass:
+    Description: "EC2 instance class (a list of allowed values must be pre-defined, t2.micro being the default);"
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+  minInstance:
+    Description: "minimum ASG instance count (a default value must be pre-defined)"
+    Type: Number
+    Default: 1
+  maxInstance:
+    Description: "maximum ASG instance count (a default value must be pre-defined)"
+    Type: Number
+    Default: 2
+  keyPair:
+    Description: "EC2 key pair name"
+    Type: String
+
+Mappings:
+  RegionMap:
+    us-east-1:
+      AMI: ami-0b898040803850657
+    us-west-1:
+      AMI: ami-056ee704806822732
+    eu-west-1:
+      AMI: ami-0bbc25e23a7640b9b
+    ap-southeast-1:
+      AMI: ami-01f7527546b557442
+    ap-southeast-2:
+      AMI: ami-0dc96254d5535925f
+
+Resources:
+  # create 's3-access-role' IAM role that can be assumed by EC2 instances
+  S3AccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "s3-access-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: ""
+
+  # create 's3-access-policy' IAM policy allowing list and get objects from mp2019-docker S3 bucket and attach to 's3-access-role' role
+  S3AccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "s3-access-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Action: "s3:ListBucket"
+            #Resource: "arn:aws:s3:::" & !Ref S3BucketName
+            Resource:
+              !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref S3BucketName
+          -
+            Effect: "Allow"
+            Action: "s3:GetObject"
+            #Resource: "arn:aws:s3:::" + !Ref S3BucketName + "/*"
+            Resource:
+              !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref S3BucketName
+                  - '/*'
+      Roles: [!Ref S3AccessRole]
+
+  # create 's3-access-profile' instance profile and associate 's3-access-role' role with it
+  S3AccessProfile:
+     Type: AWS::IAM::InstanceProfile
+     Properties:
+       InstanceProfileName: s3-access-profile
+       Path: "/"
+       Roles: [!Ref S3AccessRole]
+
+  # Launch Configuration (EC2 instance must be based on Amazon Linux 2 AMI and have a User Data script
+  # that installs Apache/php and creates "index.php" script that displays hostname, tries to connect to the database,
+  # and indicates whether it succeeded)
+  mp2019ALC:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      KeyName: !Ref keyPair #"mp2019-keypair"
+      ImageId:
+        Fn::FindInMap:
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      InstanceType: !Ref ec2InstanceClass
+      SecurityGroups: [!Ref EC2SG]
+
+      # include 's3-access-profile' instance profile into ASG Lunch Configuration
+      IamInstanceProfile: !Ref S3AccessProfile
+
+      # Lunch Configuration User Data script has to perform the following actions:
+      # install latest version of docker engine community edition (should be not lower than 18.6)
+      # ensure docker service started and will be started in system boot
+      # install docker compose via pip
+      UserData:
+        'Fn::Base64': !Sub |
+            #!/bin/bash -xe
+            echo \"---------START----------\"
+
+            yum update -y
+            amazon-linux-extras install docker
+            service docker start
+            chkconfig docker on
+            usermod -a -G docker ec2-user
+            docker version
+
+            curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+            docker-compose version
+
+            echo \"---------FINISH----------\"
+
+  mp2019ASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: "mp2019-asg"
+      LaunchConfigurationName: !Ref mp2019ALC
+      VPCZoneIdentifier: [ !Ref subnetA, !Ref subnetB]
+      MinSize: !Ref minInstance
+      MaxSize: !Ref maxInstance
+      HealthCheckGracePeriod: 300
+      HealthCheckType: "EC2"

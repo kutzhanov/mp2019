@@ -4,74 +4,56 @@ Parameters:
     Type: String
 
 Resources:
-  AnsibleSG:
+  AdminSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: for ansible instance should be allowed SSH inbound traffic
-      GroupName: MP2019_Ansible
+      GroupDescription: allow all incoming connections from your IP address and the IP address of Karaganda EPAM office
+      GroupName: Admin
       VpcId: !Ref VPCid
       SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 217.196.26.66/32 # Astana office
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 147.30.49.117/32 # home
+        - CidrIp: 217.196.26.66/32 # Astana office
+          IpProtocol: "-1"
+        - CidrIp: 147.30.49.117/32 # home
+          IpProtocol: "-1"
       Tags:
         - Key: Name
-          Value: AnsibleSG
+          Value: CF_AdminSG
 
-  WebSG:
+  DockerSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: for web SSH, HTTP traffic
-      GroupName: MP2019_Web
+      GroupDescription: allowing incoming connection on TCP port 2377, TCP and UDP port 7946, UDP port 4789 and TCP port 3306 from itself
+      GroupName: Docker
       VpcId: !Ref VPCid
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          SourceSecurityGroupId: !Ref AnsibleSG
+          FromPort: 2377
+          ToPort: 2377
+          SourceSecurityGroupId: !Ref DockerSG
         - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 217.196.26.66/32 # Astana office
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 147.30.49.117/32 # home
-      Tags:
-        - Key: Name
-          Value: WebSG
-
-  DbSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: for db instance SSH and MYSQL
-      GroupName: MP2019_Db
-      VpcId: !Ref VPCid
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          SourceSecurityGroupId: !Ref AnsibleSG
+          FromPort: 7946
+          ToPort: 7946
+          SourceSecurityGroupId: !Ref DockerSG
+        - IpProtocol: udp
+          FromPort: 7946
+          ToPort: 7946
+          SourceSecurityGroupId: !Ref DockerSG
+        - IpProtocol: udp
+          FromPort: 4789
+          ToPort: 4789
+          SourceSecurityGroupId: !Ref DockerSG
         - IpProtocol: tcp
           FromPort: 3306
           ToPort: 3306
-          SourceSecurityGroupId: !Ref WebSG
+          SourceSecurityGroupId: !Ref DockerSG
       Tags:
         - Key: Name
-          Value: DbSG
+          Value: CF_DockerSG
 
 Outputs:
-  AnsibleSGid:
-    Description: Ansible SecurityGroup ID
-    Value: !GetAtt AnsibleSG.GroupId
-  WebSGid:
-    Description: Web SecurityGroup ID
-    Value: !GetAtt WebSG.GroupId
-  DbSGid:
-    Description: Db SecurityGroup ID
-    Value: !GetAtt DbSG.GroupId
+  AdminSGid:
+    Description: Admin SecurityGroup ID
+    Value: !GetAtt AdminSG.GroupId
+  DockerSGid:
+    Description: Docker SecurityGroup ID
+    Value: !GetAtt DockerSG.GroupId
