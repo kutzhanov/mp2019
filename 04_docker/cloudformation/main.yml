@@ -67,8 +67,9 @@ Resources:
       Parameters:
         subnetA: !GetAtt NetworkingStack.Outputs.subnetAid
         subnetB: !GetAtt NetworkingStack.Outputs.subnetBid
-        EC2SG: !GetAtt SecurityGroupsStack.Outputs.EC2SGid
-        DockerSG: !GetAtt SecurityGroupsStack.Outputs.DockerSGid
+        S3BucketName: !Ref S3BucketName
+        AdminSGid: !GetAtt SecurityGroupsStack.Outputs.AdminSGid
+        DockerSGid: !GetAtt SecurityGroupsStack.Outputs.DockerSGid
         ec2InstanceClass: !Ref ec2InstanceClass
         minInstance: !Ref minInstance
         maxInstance: !Ref maxInstance
@@ -79,8 +80,3 @@ Resources:
           - - 'https://'
             - !Ref S3BucketName
             - '.s3.amazonaws.com/cf_templates/docker-nodes.yml'
-
-#Outputs:
-#  ELBdomain:
-#    Description: ELB domain name
-#    Value: !GetAtt WebStack.Outputs.ELBdomain
