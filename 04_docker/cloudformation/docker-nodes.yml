@@ -53,9 +53,13 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       RoleName: "s3-access-role"
+      Path: /
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement: ""
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
 
   # create 's3-access-policy' IAM policy allowing list and get objects from mp2019-docker S3 bucket and attach to 's3-access-role' role
   S3AccessPolicy:
@@ -94,9 +98,7 @@ Resources:
        Path: "/"
        Roles: [!Ref S3AccessRole]
 
-  # Launch Configuration (EC2 instance must be based on Amazon Linux 2 AMI and have a User Data script
-  # that installs Apache/php and creates "index.php" script that displays hostname, tries to connect to the database,
-  # and indicates whether it succeeded)
+  # Launch Configuration (EC2 instance must be based on Amazon Linux 2 AMI and have a User Data script)
   mp2019ALC:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
