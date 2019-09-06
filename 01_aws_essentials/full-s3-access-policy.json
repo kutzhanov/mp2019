@@ -1,0 +1,11 @@
+{
+    "Statement": [
+        {
+            "Sid": "S3FullAccess",
+            "Effect": "Allow",
+            "Action": "s3:*",
+            "Resource": "*"
+        }
+    ],
+    "Version": "2012-10-17"
+}

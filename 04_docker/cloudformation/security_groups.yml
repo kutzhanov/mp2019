@@ -1,0 +1,77 @@
+Parameters:
+  VPCid:
+    Description: "VPC ID"
+    Type: String
+
+Resources:
+  AnsibleSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: for ansible instance should be allowed SSH inbound traffic
+      GroupName: MP2019_Ansible
+      VpcId: !Ref VPCid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 217.196.26.66/32 # Astana office
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 147.30.49.117/32 # home
+      Tags:
+        - Key: Name
+          Value: AnsibleSG
+
+  WebSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: for web SSH, HTTP traffic
+      GroupName: MP2019_Web
+      VpcId: !Ref VPCid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref AnsibleSG
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 217.196.26.66/32 # Astana office
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 147.30.49.117/32 # home
+      Tags:
+        - Key: Name
+          Value: WebSG
+
+  DbSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: for db instance SSH and MYSQL
+      GroupName: MP2019_Db
+      VpcId: !Ref VPCid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref AnsibleSG
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref WebSG
+      Tags:
+        - Key: Name
+          Value: DbSG
+
+Outputs:
+  AnsibleSGid:
+    Description: Ansible SecurityGroup ID
+    Value: !GetAtt AnsibleSG.GroupId
+  WebSGid:
+    Description: Web SecurityGroup ID
+    Value: !GetAtt WebSG.GroupId
+  DbSGid:
+    Description: Db SecurityGroup ID
+    Value: !GetAtt DbSG.GroupId

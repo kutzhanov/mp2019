@@ -1,0 +1,134 @@
+Parameters:
+  subnetA:
+    Description: "ID of subnet A to place RDS instance in"
+    Type: String
+  subnetB:
+    Description: "ID of subnet B to place RDS instance in"
+    Type: String
+  ELBSG:
+    Description: "security group IDs for ELB"
+    Type: String
+  EC2SG:
+    Description: "security group IDs for EC2 instances"
+    Type: String
+  ec2InstanceClass:
+    Description: "EC2 instance class (a list of allowed values must be pre-defined, t2.micro being the default);"
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+  minInstance:
+    Description: "minimum ASG instance count (a default value must be pre-defined)"
+    Type: Number
+    Default: 1
+  maxInstance:
+    Description: "maximum ASG instance count (a default value must be pre-defined)"
+    Type: Number
+    Default: 1
+  keyPair:
+    Description: "EC2 key pair name"
+    Type: String
+  RDSendpoint:
+    Description: "RDS endpoint address"
+    Type: String
+  DBUsername:
+    Description: "database username"
+    Type: String
+    MinLength: 4
+    MaxLength: 15
+    AllowedPattern: ^[a-zA-Z0-9]*$
+  DBPassword:
+    NoEcho: true
+    Description: "database password (this value must not be visible when entered during stack creation)"
+    Type: String
+    MinLength: 5
+    MaxLength: 10
+    AllowedPattern: ^[a-zA-Z0-9]*$
+Mappings:
+  RegionMap:
+    us-east-1:
+      AMI: ami-0b898040803850657
+    us-west-1:
+      AMI: ami-056ee704806822732
+    eu-west-1:
+      AMI: ami-0bbc25e23a7640b9b
+    ap-southeast-1:
+      AMI: ami-01f7527546b557442
+    ap-southeast-2:
+      AMI: ami-0dc96254d5535925f
+Resources:
+  # internet-facing classic Elastic Load Balancer
+  mp2019ELB:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      LoadBalancerName: "mp2019-elb"
+      Listeners:
+        - InstancePort: "80"
+          InstanceProtocol: "HTTP"
+          LoadBalancerPort: "80"
+          Protocol: "HTTP"
+      Subnets: [ !Ref subnetA, !Ref subnetB]
+      SecurityGroups: [ !Ref ELBSG, !Ref EC2SG]
+      Scheme: "internet-facing"
+  # Launch Configuration (EC2 instance must be based on Amazon Linux 2 AMI and have a User Data script
+  # that installs Apache/php and creates "index.php" script that displays hostname, tries to connect to the database,
+  # and indicates whether it succeeded)
+  mp2019ALC:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      KeyName: !Ref keyPair #"mp2019-keypair"
+      ImageId:
+        Fn::FindInMap:
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      InstanceType: !Ref ec2InstanceClass
+      SecurityGroups: [!Ref EC2SG]
+      UserData:
+        Fn::Base64: !Sub
+          - |
+            #! /bin/bash -xe
+
+            yum -y install httpd
+            yum -y install php
+            yum -y install php-mysql
+            cd /var/www/html/
+            touch index.php
+
+            echo "<?php
+            \$servername = \"${ServerName}\";
+            \$username = \"${DBUsername}\";
+            \$password = \"${DBPassword}\";
+            \$hostname = gethostname();
+            // Create connection
+            \$conn = new mysqli(\$servername, \$username, \$password);
+            // Check connection
+            if (\$conn->connect_error) {
+                die(\"\$hostname connection failed: \" . \$conn->connect_error);
+            }
+            echo \"\$hostname successfully connected to \$servername\";
+            ?>" >> index.php
+
+            service httpd start
+            chkconfig httpd on
+          - {
+            ServerName: !Ref RDSendpoint,
+            DBUsername: !Ref DBUsername,
+            DBPassword: !Ref DBPassword,
+            }
+  # Auto Scaling group linked with the Elastic Load Balancer.
+  mp2019ASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: "mp2019-asg"
+      LaunchConfigurationName: !Ref mp2019ALC
+      LoadBalancerNames: [ !Ref mp2019ELB ]
+      VPCZoneIdentifier: [ !Ref subnetA, !Ref subnetB]
+      MinSize: !Ref minInstance
+      MaxSize: !Ref maxInstance
+Outputs:
+  ELBdomain:
+    Description: ELB domain name
+    Value: !GetAtt mp2019ELB.DNSName

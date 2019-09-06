@@ -1,0 +1,453 @@
+Task 1
+
+aws cloudformation validate-template --template-body file://networking.yaml
+{
+    "Parameters": [
+        {
+            "ParameterKey": "cidrBlockSubnetB",
+            "DefaultValue": "192.168.2.0/24",
+            "NoEcho": false,
+            "Description": "CIDR block for Subnet B."
+        },
+        {
+            "ParameterKey": "cidrBlock",
+            "DefaultValue": "192.168.0.0/16",
+            "NoEcho": false,
+            "Description": "CIDR block for VPC."
+        },
+        {
+            "ParameterKey": "cidrBlockSubnetA",
+            "DefaultValue": "192.168.1.0/24",
+            "NoEcho": false,
+            "Description": "CIDR block for Subnet A."
+        }
+    ]
+}
+
+
+aws cloudformation create-stack --stack-name networking --template-body file://networking.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/networking/9e89b360-9e44-11e9-a68d-0e92b042adf6"
+}
+
+aws cloudformation describe-stacks --stack-name networking
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/networking/9e89b360-9e44-11e9-a68d-0e92b042adf6",
+            "StackName": "networking",
+            "Parameters": [
+                {
+                    "ParameterKey": "cidrBlockSubnetB",
+                    "ParameterValue": "192.168.2.0/24"
+                },
+                {
+                    "ParameterKey": "cidrBlock",
+                    "ParameterValue": "192.168.0.0/16"
+                },
+                {
+                    "ParameterKey": "cidrBlockSubnetA",
+                    "ParameterValue": "192.168.1.0/24"
+                }
+            ],
+            "CreationTime": "2019-07-04T10:15:16.641Z",
+            "RollbackConfiguration": {},
+            "StackStatus": "CREATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "subnetBid",
+                    "OutputValue": "subnet-02b810e187f0bfb47",
+                    "Description": "subnet B ID"
+                },
+                {
+                    "OutputKey": "VPCid",
+                    "OutputValue": "vpc-066bc16692b4ad48b",
+                    "Description": "VPC ID"
+                },
+                {
+                    "OutputKey": "subnetAid",
+                    "OutputValue": "subnet-0baaf0f12d1d6310c",
+                    "Description": "subnet A ID"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+
+aws cloudformation update-stack --stack-name networking --template-body file://networking.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/networking/9e89b360-9e44-11e9-a68d-0e92b042adf6"
+}
+
+Task 2
+
+aws cloudformation validate-template --template-body file://security_groups.yaml
+{
+    "Parameters": [
+        {
+            "ParameterKey": "VPCid",
+            "NoEcho": false,
+            "Description": "VPC ID"
+        }
+    ]
+}
+
+aws cloudformation create-stack --stack-name SecurityGroups --template-body file://security_groups.yaml --parameters ParameterKey=VPCid,ParameterValue=vpc-066bc16692b4ad48b
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/SecurityGroups/24730090-a146-11e9-bac4-12d48e821f84"
+}
+	
+aws cloudformation describe-stacks --stack-name SecurityGroups
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/SecurityGroups/24730090-a146-11e9-bac4-12d48e821f84",
+            "StackName": "SecurityGroups",
+            "Parameters": [
+                {
+                    "ParameterKey": "VPCid",
+                    "ParameterValue": "vpc-066bc16692b4ad48b"
+                }
+            ],
+            "CreationTime": "2019-07-08T06:52:00.892Z",
+            "RollbackConfiguration": {},
+            "StackStatus": "CREATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "AdminSGid",
+                    "OutputValue": "sg-05c1721d682d56548",
+                    "Description": "Admin SecurityGroup ID"
+                },
+                {
+                    "OutputKey": "RDSSGid",
+                    "OutputValue": "sg-0e9283dc48f1697f2",
+                    "Description": "RDS SecurityGroup ID"
+                },
+                {
+                    "OutputKey": "EC2SGid",
+                    "OutputValue": "sg-0623ac162d6c232b6",
+                    "Description": "EC2 SecurityGroup ID"
+                },
+                {
+                    "OutputKey": "ELBSGid",
+                    "OutputValue": "sg-03686676c8a2c729e",
+                    "Description": "ELB SecurityGroup ID"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}	
+Task 3
+
+aws cloudformation create-stack --stack-name database --template-body file://database.yaml --parameters ParameterKey=subnetA,ParameterValue=subnet-0baaf0f12d1d6310c ParameterKey=subnetB,ParameterValue=subnet-02b810e187f0bfb47 ParameterKey=AdminSGid,ParameterValue=sg-05c1721d682d56548 ParameterKey=RDSSGid,ParameterValue=sg-0e9283dc48f1697f2 ParameterKey=InstanceClass,ParameterValue=db.t2.micro ParameterKey=SlowQueryLog,ParameterValue=1 ParameterKey=DBUsername,ParameterValue=admin ParameterKey=DBPassword,ParameterValue=Rt80j3ICd
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/database/c00d6e80-a6e8-11e9-b773-1262c1c6cf8e"
+}
+
+aws cloudformation describe-stacks --stack-name database
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/database/c00d6e80-a6e8-11e9-b773-1262c1c6cf8e",
+            "StackName": "database",
+            "Parameters": [
+                {
+                    "ParameterKey": "AdminSGid",
+                    "ParameterValue": "sg-05c1721d682d56548"
+                },
+                {
+                    "ParameterKey": "RDSSGid",
+                    "ParameterValue": "sg-0e9283dc48f1697f2"
+                },
+                {
+                    "ParameterKey": "SlowQueryLog",
+                    "ParameterValue": "1"
+                },
+                {
+                    "ParameterKey": "DBPassword",
+                    "ParameterValue": "****"
+                },
+                {
+                    "ParameterKey": "subnetA",
+                    "ParameterValue": "subnet-0baaf0f12d1d6310c"
+                },
+                {
+                    "ParameterKey": "subnetB",
+                    "ParameterValue": "subnet-02b810e187f0bfb47"
+                },
+                {
+                    "ParameterKey": "InstanceClass",
+                    "ParameterValue": "db.t2.micro"
+                },
+                {
+                    "ParameterKey": "DBUsername",
+                    "ParameterValue": "admin"
+                }
+            ],
+            "CreationTime": "2019-07-15T10:10:19.635Z",
+            "RollbackConfiguration": {},
+            "StackStatus": "CREATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "RDSendpoint",
+                    "OutputValue": "mp2019db.cm2uokxn1kjg.us-east-1.rds.amazonaws.com",
+                    "Description": "RDS endpoint address"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+
+Task 4
+
+aws cloudformation create-stack --stack-name web --template-body file://web.yaml --parameters ParameterKey=subnetA,ParameterValue=subnet-0baaf0f12d1d6310c ParameterKey=subnetB,ParameterValue=subnet-02b810e187f0bfb47 ParameterKey=ELBSG,ParameterValue=sg-03686676c8a2c729e ParameterKey=EC2SG,ParameterValue=sg-0623ac162d6c232b6 ParameterKey=keyPair,ParameterValue=mp2019-keypair ParameterKey=RDSendpoint,ParameterValue=mp2019db.cm2uokxn1kjg.us-east-1.rds.amazonaws.com ParameterKey=DBUsername,ParameterValue=admin ParameterKey=DBPassword,ParameterValue=Rt80j3ICd
+
+aws cloudformation describe-stacks --stack-name web
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/web/ab62c3a0-a6ec-11e9-83f3-12d99c723360",
+            "StackName": "web",
+            "Parameters": [
+                {
+                    "ParameterKey": "ELBSG",
+                    "ParameterValue": "sg-03686676c8a2c729e"
+                },
+                {
+                    "ParameterKey": "maxInstance",
+                    "ParameterValue": "1"
+                },
+                {
+                    "ParameterKey": "EC2SG",
+                    "ParameterValue": "sg-0623ac162d6c232b6"
+                },
+                {
+                    "ParameterKey": "DBPassword",
+                    "ParameterValue": "****"
+                },
+                {
+                    "ParameterKey": "subnetA",
+                    "ParameterValue": "subnet-0baaf0f12d1d6310c"
+                },
+                {
+                    "ParameterKey": "subnetB",
+                    "ParameterValue": "subnet-02b810e187f0bfb47"
+                },
+                {
+                    "ParameterKey": "InstanceClass",
+                    "ParameterValue": "t2.micro"
+                },
+                {
+                    "ParameterKey": "keyPair",
+                    "ParameterValue": "mp2019-keypair"
+                },
+                {
+                    "ParameterKey": "RDSendpoint",
+                    "ParameterValue": "mp2019db.cm2uokxn1kjg.us-east-1.rds.amazonaws.com"
+                },
+                {
+                    "ParameterKey": "DBUsername",
+                    "ParameterValue": "admin"
+                },
+                {
+                    "ParameterKey": "minInstance",
+                    "ParameterValue": "1"
+                }
+            ],
+            "CreationTime": "2019-07-15T10:38:22.951Z",
+            "LastUpdatedTime": "2019-07-15T11:59:08.696Z",
+            "RollbackConfiguration": {},
+            "StackStatus": "UPDATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "ELBdomain",
+                    "OutputValue": "mp2019-elb-952161294.us-east-1.elb.amazonaws.com",
+                    "Description": "ELB domain name"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+
+
+Task 5
+
+aws cloudformation validate-template --template-body file://main.yaml
+{
+    "Parameters": [
+        {
+            "ParameterKey": "cidrBlockSubnetB",
+            "DefaultValue": "192.168.2.0/24",
+            "NoEcho": false,
+            "Description": "CIDR block for Subnet B."
+        },
+        {
+            "ParameterKey": "maxInstance",
+            "DefaultValue": "1",
+            "NoEcho": false,
+            "Description": "maximum ASG instance count (a default value must be pre-defined)"
+        },
+        {
+            "ParameterKey": "SlowQueryLog",
+            "NoEcho": false,
+            "Description": "MySQL slow_query_log setting (allowed values: 0 or 1)"
+        },
+        {
+            "ParameterKey": "DBPassword",
+            "NoEcho": true,
+            "Description": "database password (this value must not be visible when entered during stack creation)"
+        },
+        {
+            "ParameterKey": "DBInstanceClass",
+            "DefaultValue": "db.t2.micro",
+            "NoEcho": false,
+            "Description": "RDS instance class (a list of allowed values must be pre-defined)"
+        },
+        {
+            "ParameterKey": "cidrBlock",
+            "DefaultValue": "192.168.0.0/16",
+            "NoEcho": false,
+            "Description": "CIDR block for VPC."
+        },
+        {
+            "ParameterKey": "cidrBlockSubnetA",
+            "DefaultValue": "192.168.1.0/24",
+            "NoEcho": false,
+            "Description": "CIDR block for Subnet A."
+        },
+        {
+            "ParameterKey": "keyPair",
+            "NoEcho": false,
+            "Description": "EC2 key pair name"
+        },
+        {
+            "ParameterKey": "ec2InstanceClass",
+            "DefaultValue": "t2.micro",
+            "NoEcho": false,
+            "Description": "EC2 instance class (a list of allowed values must be pre-defined, t2.micro being the default);"
+        },
+        {
+            "ParameterKey": "DBUsername",
+            "NoEcho": false,
+            "Description": "database username"
+        },
+        {
+            "ParameterKey": "minInstance",
+            "DefaultValue": "1",
+            "NoEcho": false,
+            "Description": "minimum ASG instance count (a default value must be pre-defined)"
+        }
+    ],
+    "Capabilities": [
+        "CAPABILITY_NAMED_IAM",
+        "CAPABILITY_AUTO_EXPAND"
+    ],
+    "CapabilitiesReason": "The following resource(s) require capabilities: [AWS::CloudFormation::Stack]"
+}
+
+aws cloudformation create-stack --stack-name main --template-body file://main.yaml --parameters ParameterKey=SlowQueryLog,ParameterValue=1 ParameterKey=DBUsername,ParameterValue=admin ParameterKey=DBPassword,ParameterValue=Rt80j3ICd ParameterKey=keyPair,ParameterValue=mp2019-keypair
+
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/main/1948d630-a7af-11e9-b773-1262c1c6cf8e"
+}
+
+aws cloudformation describe-stacks --stack-name main
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:194400501996:stack/main/3a19a340-a7c7-11e9-a0ed-0aa1af63e98c",
+            "StackName": "main",
+            "Parameters": [
+                {
+                    "ParameterKey": "cidrBlockSubnetB",
+                    "ParameterValue": "192.168.2.0/24"
+                },
+                {
+                    "ParameterKey": "maxInstance",
+                    "ParameterValue": "1"
+                },
+                {
+                    "ParameterKey": "SlowQueryLog",
+                    "ParameterValue": "1"
+                },
+                {
+                    "ParameterKey": "DBPassword",
+                    "ParameterValue": "****"
+                },
+                {
+                    "ParameterKey": "DBInstanceClass",
+                    "ParameterValue": "db.t2.micro"
+                },
+                {
+                    "ParameterKey": "cidrBlock",
+                    "ParameterValue": "192.168.0.0/16"
+                },
+                {
+                    "ParameterKey": "cidrBlockSubnetA",
+                    "ParameterValue": "192.168.1.0/24"
+                },
+                {
+                    "ParameterKey": "keyPair",
+                    "ParameterValue": "mp2019-keypair"
+                },
+                {
+                    "ParameterKey": "ec2InstanceClass",
+                    "ParameterValue": "t2.micro"
+                },
+                {
+                    "ParameterKey": "DBUsername",
+                    "ParameterValue": "admin"
+                },
+                {
+                    "ParameterKey": "minInstance",
+                    "ParameterValue": "1"
+                }
+            ],
+            "CreationTime": "2019-07-16T12:42:52.671Z",
+            "RollbackConfiguration": {},
+            "StackStatus": "CREATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "ELBdomain",
+                    "OutputValue": "mp2019-elb-1114657702.us-east-1.elb.amazonaws.com",
+                    "Description": "ELB domain name"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}

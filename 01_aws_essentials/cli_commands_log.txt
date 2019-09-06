@@ -1,0 +1,1107 @@
+Task 4:
+aws iam create-group --group-name mentors
+{
+    "Group": {
+        "Path": "/",
+        "GroupName": "mentors",
+        "GroupId": "AGPAS2QZMIDWF5BDC6RRW",
+        "Arn": "arn:aws:iam::194400501996:group/mentors",
+        "CreateDate": "2019-06-07T12:21:51Z"
+    }
+}
+
+aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/ReadOnlyAccess --group-name
+aws iam list-attached-group-policies --group-name mentors
+{
+    "AttachedPolicies": [
+        {
+            "PolicyName": "ReadOnlyAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+    ]
+}
+aws iam list-policies --only-attached
+
+aws iam create-user --user-name mentor
+{
+    "User": {
+        "Path": "/",
+        "UserName": "mentor",
+        "UserId": "AIDAS2QZMIDWASUB2NCC5",
+        "Arn": "arn:aws:iam::194400501996:user/mentor",
+        "CreateDate": "2019-06-07T12:30:38Z"
+    }
+}
+aws iam create-login-profile --user-name mentor --password 123456Qw! --no-password-reset-required
+{
+    "LoginProfile": {
+        "UserName": "mentor",
+        "CreateDate": "2019-06-07T12:32:37Z",
+        "PasswordResetRequired": false
+    }
+}
+aws iam create-access-key --user-name mentor
+{
+    "AccessKey": {
+        "UserName": "mentor",
+        "AccessKeyId": "AKIAS2QZMIDWFNOFMLNX",
+        "Status": "Active",
+        "SecretAccessKey": "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",
+        "CreateDate": "2019-06-07T12:33:50Z"
+    }
+}
+aws iam add-user-to-group --group-name mentors --user-name mentor
+aws iam list-groups-for-user --user-name mentor
+{
+    "Groups": [
+        {
+            "Path": "/",
+            "GroupName": "mentors",
+            "GroupId": "AGPAS2QZMIDWF5BDC6RRW",
+            "Arn": "arn:aws:iam::194400501996:group/mentors",
+            "CreateDate": "2019-06-07T12:21:51Z"
+        }
+    ]
+}
+
+Task 5:
+# Create a new S3 bucket called "<your-prefix>-backup", replacing <your-prefix> with some value of your choice to make the name of the bucket unique.
+aws s3 mb s3://kutzhanov-backup --region us-east-1
+make_bucket: kutzhanov-backup
+# Upload a file called "1.zip" into folder "one". 
+aws s3 cp 1.zip s3://kutzhanov-backup/one/1.zip
+upload: .\1.zip to s3://kutzhanov-backup/one/1.zip
+# Upload another file, called "2.zip", into folder "two"
+aws s3 cp 2.zip s3://kutzhanov-backup/two/2.zip
+upload: .\2.zip to s3://kutzhanov-backup/two/2.zip
+aws s3 ls
+2019-06-07 18:39:16 kutzhanov-backup
+# Make "one/1.zip" file publicly accessible for reading using object ACL.
+aws s3api put-object-acl --acl public-read --bucket kutzhanov-backup --key one/1.zip
+aws s3api get-object-acl --bucket kutzhanov-backup --key one/1.zip
+{
+    "Owner": {
+        "DisplayName": "kutzhanov",
+        "ID": "28253ac91baf2200cc0b6bc58bf673c88aeb1e993fbb3fe6deeb0b53fdbea747"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "kutzhanov",
+                "ID": "28253ac91baf2200cc0b6bc58bf673c88aeb1e993fbb3fe6deeb0b53fdbea747",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        },
+        {
+            "Grantee": {
+                "Type": "Group",
+                "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+            },
+            "Permission": "READ"
+        }
+    ]
+}
+# Make all contents of folder "two" publicly accessible for reading using a bucket policy.
+aws s3api put-bucket-policy --bucket kutzhanov-backup --policy file://s3_bucket_policy.json
+aws s3api get-bucket-policy --bucket kutzhanov-backup
+{
+    "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"Policy1559913168572\",\"Statement\":[{\"Sid\":\"Stmt1559913163854\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::kutzhanov-backup/two/*\"}]}"
+}
+
+Task 6:
+# Create a new S3 bucket called "<your-prefix>-web", replacing <your-prefix> with some value of your choice to make the name of the bucket unique.
+aws s3 mb s3://kutzhanov-web --region=us-east-1
+make_bucket: kutzhanov-web
+#Clone the static-webpage-example repository and upload the contents of its "src" folder to "<your-prefix>-web" bucket.
+aws s3 cp static-webpage-example/src s3://kutzhanov-web --recursive
+or
+aws s3 sync static-webpage-example/src/ s3://kutzhanov-web
+upload: static-webpage-example/src/css/creative.css to s3://kutzhanov-web/css/creative.css
+upload: static-webpage-example/src/font-awesome/css/font-awesome.min.css to s3://kutzhanov-web/font-awesome/css/font-awesome.min.css
+upload: static-webpage-example/src/font-awesome/css/font-awesome.css to s3://kutzhanov-web/font-awesome/css/font-awesome.css
+upload: static-webpage-example/src/font-awesome/less/animated.less to s3://kutzhanov-web/font-awesome/less/animated.less
+upload: static-webpage-example/src/font-awesome/less/bordered-pulled.less to s3://kutzhanov-web/font-awesome/less/bordered-pulled.less
+upload: static-webpage-example/src/css/animate.min.css to s3://kutzhanov-web/css/animate.min.css
+upload: static-webpage-example/src/font-awesome/fonts/fontawesome-webfont.eot to s3://kutzhanov-web/font-awesome/fonts/fontawesome-webfont.eot
+upload: static-webpage-example/src/font-awesome/less/core.less to s3://kutzhanov-web/font-awesome/less/core.less
+upload: static-webpage-example/src/font-awesome/fonts/fontawesome-webfont.woff to s3://kutzhanov-web/font-awesome/fonts/fontawesome-webfont.woff
+upload: static-webpage-example/src/font-awesome/less/font-awesome.less to s3://kutzhanov-web/font-awesome/less/font-awesome.less
+upload: static-webpage-example/src/font-awesome/less/fixed-width.less to s3://kutzhanov-web/font-awesome/less/fixed-width.less
+upload: static-webpage-example/src/font-awesome/fonts/fontawesome-webfont.ttf to s3://kutzhanov-web/font-awesome/fonts/fontawesome-webfont.ttf
+upload: static-webpage-example/src/font-awesome/fonts/fontawesome-webfont.woff2 to s3://kutzhanov-web/font-awesome/fonts/fontawesome-webfont.woff2
+upload: static-webpage-example/src/font-awesome/less/larger.less to s3://kutzhanov-web/font-awesome/less/larger.less
+upload: static-webpage-example/src/font-awesome/fonts/FontAwesome.otf to s3://kutzhanov-web/font-awesome/fonts/FontAwesome.otf
+upload: static-webpage-example/src/font-awesome/less/list.less to s3://kutzhanov-web/font-awesome/less/list.less
+upload: static-webpage-example/src/font-awesome/less/mixins.less to s3://kutzhanov-web/font-awesome/less/mixins.less
+upload: static-webpage-example/src/font-awesome/less/path.less to s3://kutzhanov-web/font-awesome/less/path.less
+upload: static-webpage-example/src/font-awesome/less/stacked.less to s3://kutzhanov-web/font-awesome/less/stacked.less
+upload: static-webpage-example/src/font-awesome/less/rotated-flipped.less to s3://kutzhanov-web/font-awesome/less/rotated-flipped.less
+upload: static-webpage-example/src/css/bootstrap.min.css to s3://kutzhanov-web/css/bootstrap.min.css
+upload: static-webpage-example/src/font-awesome/less/icons.less to s3://kutzhanov-web/font-awesome/less/icons.less
+upload: static-webpage-example/src/font-awesome/scss/_bordered-pulled.scss to s3://kutzhanov-web/font-awesome/scss/_bordered-pulled.scss
+upload: static-webpage-example/src/font-awesome/scss/_animated.scss to s3://kutzhanov-web/font-awesome/scss/_animated.scss
+upload: static-webpage-example/src/font-awesome/less/variables.less to s3://kutzhanov-web/font-awesome/less/variables.less
+upload: static-webpage-example/src/font-awesome/scss/_core.scss to s3://kutzhanov-web/font-awesome/scss/_core.scss
+upload: static-webpage-example/src/font-awesome/scss/_larger.scss to s3://kutzhanov-web/font-awesome/scss/_larger.scss
+upload: static-webpage-example/src/font-awesome/scss/_icons.scss to s3://kutzhanov-web/font-awesome/scss/_icons.scss
+upload: static-webpage-example/src/font-awesome/scss/_mixins.scss to s3://kutzhanov-web/font-awesome/scss/_mixins.scss
+upload: static-webpage-example/src/font-awesome/scss/_path.scss to s3://kutzhanov-web/font-awesome/scss/_path.scss
+upload: static-webpage-example/src/font-awesome/scss/_rotated-flipped.scss to s3://kutzhanov-web/font-awesome/scss/_rotated-flipped.scss
+upload: static-webpage-example/src/font-awesome/scss/_fixed-width.scss to s3://kutzhanov-web/font-awesome/scss/_fixed-width.scss
+upload: static-webpage-example/src/css/bootstrap.css to s3://kutzhanov-web/css/bootstrap.css
+upload: static-webpage-example/src/font-awesome/scss/_stacked.scss to s3://kutzhanov-web/font-awesome/scss/_stacked.scss
+upload: static-webpage-example/src/font-awesome/scss/_list.scss to s3://kutzhanov-web/font-awesome/scss/_list.scss
+upload: static-webpage-example/src/font-awesome/scss/_variables.scss to s3://kutzhanov-web/font-awesome/scss/_variables.scss
+upload: static-webpage-example/src/font-awesome/scss/font-awesome.scss to s3://kutzhanov-web/font-awesome/scss/font-awesome.scss
+upload: static-webpage-example/src/fonts/glyphicons-halflings-regular.eot to s3://kutzhanov-web/fonts/glyphicons-halflings-regular.eot
+upload: static-webpage-example/src/fonts/glyphicons-halflings-regular.woff2 to s3://kutzhanov-web/fonts/glyphicons-halflings-regular.woff2
+upload: static-webpage-example/src/fonts/glyphicons-halflings-regular.woff to s3://kutzhanov-web/fonts/glyphicons-halflings-regular.woff
+upload: static-webpage-example/src/fonts/glyphicons-halflings-regular.ttf to s3://kutzhanov-web/fonts/glyphicons-halflings-regular.ttf
+upload: static-webpage-example/src/img/portfolio/1.jpg to s3://kutzhanov-web/img/portfolio/1.jpg
+upload: static-webpage-example/src/img/portfolio/3.jpg to s3://kutzhanov-web/img/portfolio/3.jpg
+upload: static-webpage-example/src/img/portfolio/5.jpg to s3://kutzhanov-web/img/portfolio/5.jpg
+upload: static-webpage-example/src/js/cbpAnimatedHeader.js to s3://kutzhanov-web/js/cbpAnimatedHeader.js
+upload: static-webpage-example/src/fonts/glyphicons-halflings-regular.svg to s3://kutzhanov-web/fonts/glyphicons-halflings-regular.svg
+upload: static-webpage-example/src/img/portfolio/2.jpg to s3://kutzhanov-web/img/portfolio/2.jpg
+upload: static-webpage-example/src/js/classie.js to s3://kutzhanov-web/js/classie.js
+upload: static-webpage-example/src/img/portfolio/6.jpg to s3://kutzhanov-web/img/portfolio/6.jpg
+upload: static-webpage-example/src/js/jquery.easing.min.js to s3://kutzhanov-web/js/jquery.easing.min.js
+upload: static-webpage-example/src/js/creative.js to s3://kutzhanov-web/js/creative.js
+upload: static-webpage-example/src/js/bootstrap.min.js to s3://kutzhanov-web/js/bootstrap.min.js
+upload: static-webpage-example/src/js/jquery.fittext.js to s3://kutzhanov-web/js/jquery.fittext.js
+upload: static-webpage-example/src/img/portfolio/4.jpg to s3://kutzhanov-web/img/portfolio/4.jpg
+upload: static-webpage-example/src/js/wow.min.js to s3://kutzhanov-web/js/wow.min.js
+upload: static-webpage-example/src/less/mixins.less to s3://kutzhanov-web/less/mixins.less
+upload: static-webpage-example/src/less/creative.less to s3://kutzhanov-web/less/creative.less
+upload: static-webpage-example/src/less/variables.less to s3://kutzhanov-web/less/variables.less
+upload: static-webpage-example/src/js/jquery.js to s3://kutzhanov-web/js/jquery.js
+upload: static-webpage-example/src/js/bootstrap.js to s3://kutzhanov-web/js/bootstrap.js
+upload: static-webpage-example/src/img/header.jpg to s3://kutzhanov-web/img/header.jpg
+upload: static-webpage-example/src/font-awesome/fonts/fontawesome-webfont.svg to s3://kutzhanov-web/font-awesome/fonts/fontawesome-webfont.svg
+
+aws s3api put-bucket-policy --bucket kutzhanov-web --policy file://s3_bucket_policy_kutzhanov-web.json
+aws s3api get-bucket-policy --bucket kutzhanov-web
+{
+    "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"Policy1560159814170\",\"Statement\":[{\"Sid\":\"Stmt1560159812349\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::kutzhanov-web/*\"}]}"
+
+# Enable Static Website Hosting on the bucket. 
+aws s3 website s3://kutzhanov-web --index-document index.html
+# Verify that the site can be accessed via the bucket's static website endpoint.
+http://kutzhanov-web.s3-website-us-east-1.amazonaws.com/
+
+# Create a CloudFront distribution using the static website domain name as the origin.
+aws cloudfront create-distribution --origin-domain-name kutzhanov-web.s3-website-us-east-1.amazonaws.com --default-root-object index.html
+{
+    "Location": "https://cloudfront.amazonaws.com/2018-11-05/distribution/EIUBFG3WKCYVO",
+    "ETag": "E3OKQ4CBTOSIQ8",
+    "Distribution": {
+        "Id": "EIUBFG3WKCYVO",
+        "ARN": "arn:aws:cloudfront::194400501996:distribution/EIUBFG3WKCYVO",
+        "Status": "InProgress",
+        "LastModifiedTime": "2019-06-10T12:05:23.912Z",
+        "InProgressInvalidationBatches": 0,
+        "DomainName": "d1vqae7l6vg0t7.cloudfront.net",
+        "ActiveTrustedSigners": {
+            "Enabled": false,
+            "Quantity": 0
+        },
+        "DistributionConfig": {
+            "CallerReference": "cli-1560168322-909237",
+            "Aliases": {
+                "Quantity": 0
+            },
+            "DefaultRootObject": "index.html",
+            "Origins": {
+                "Quantity": 1,
+                "Items": [
+                    {
+                        "Id": "kutzhanov-web.s3-website-us-east-1.amazonaws.com-1560168322-462744",
+                        "DomainName": "kutzhanov-web.s3-website-us-east-1.amazonaws.com",
+                        "OriginPath": "",
+                        "CustomHeaders": {
+                            "Quantity": 0
+                        },
+                        "CustomOriginConfig": {
+                            "HTTPPort": 80,
+                            "HTTPSPort": 443,
+                            "OriginProtocolPolicy": "http-only",
+                            "OriginSslProtocols": {
+                                "Quantity": 3,
+                                "Items": [
+                                    "TLSv1",
+                                    "TLSv1.1",
+                                    "TLSv1.2"
+                                ]
+                            },
+                            "OriginReadTimeout": 30,
+                            "OriginKeepaliveTimeout": 5
+                        }
+                    }
+                ]
+            },
+            "OriginGroups": {
+                "Quantity": 0
+            },
+            "DefaultCacheBehavior": {
+                "TargetOriginId": "kutzhanov-web.s3-website-us-east-1.amazonaws.com-1560168322-462744",
+                "ForwardedValues": {
+                    "QueryString": false,
+                    "Cookies": {
+                        "Forward": "none"
+                    },
+                    "Headers": {
+                        "Quantity": 0
+                    },
+                    "QueryStringCacheKeys": {
+                        "Quantity": 0
+                    }
+                },
+                "TrustedSigners": {
+                    "Enabled": false,
+                    "Quantity": 0
+                },
+                "ViewerProtocolPolicy": "allow-all",
+                "MinTTL": 0,
+                "AllowedMethods": {
+                    "Quantity": 2,
+                    "Items": [
+                        "HEAD",
+                        "GET"
+                    ],
+                    "CachedMethods": {
+                        "Quantity": 2,
+                        "Items": [
+                            "HEAD",
+                            "GET"
+                        ]
+                    }
+                },
+                "SmoothStreaming": false,
+                "DefaultTTL": 86400,
+                "MaxTTL": 31536000,
+                "Compress": false,
+                "LambdaFunctionAssociations": {
+                    "Quantity": 0
+                },
+                "FieldLevelEncryptionId": ""
+            },
+            "CacheBehaviors": {
+                "Quantity": 0
+            },
+            "CustomErrorResponses": {
+                "Quantity": 0
+            },
+            "Comment": "",
+            "Logging": {
+                "Enabled": false,
+                "IncludeCookies": false,
+                "Bucket": "",
+                "Prefix": ""
+            },
+            "PriceClass": "PriceClass_All",
+            "Enabled": true,
+            "ViewerCertificate": {
+                "CloudFrontDefaultCertificate": true,
+                "MinimumProtocolVersion": "TLSv1",
+                "CertificateSource": "cloudfront"
+            },
+            "Restrictions": {
+                "GeoRestriction": {
+                    "RestrictionType": "none",
+                    "Quantity": 0
+                }
+            },
+            "WebACLId": "",
+            "HttpVersion": "http2",
+            "IsIPV6Enabled": true
+        }
+    }
+}
+# Verify that the site can be accessed using HTTPS via the distribution domain name.
+https://d1vqae7l6vg0t7.cloudfront.net/
+
+Task 7
+# Create a new VPC with IPv4 CIDR block 10.123.0.0/16. Name the VPC by assigning it a "Name" tag with the value "mp2019". Turn on "enableDnsSupport" and "enableDnsHostnames" attributes for it. 
+aws ec2 create-vpc --cidr-block 10.123.0.0/16
+{
+    "Vpc": {
+        "CidrBlock": "10.123.0.0/16",
+        "DhcpOptionsId": "dopt-1e654965",
+        "State": "pending",
+        "VpcId": "vpc-02760e418060a042b",
+        "OwnerId": "194400501996",
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": [],
+        "CidrBlockAssociationSet": [
+            {
+                "AssociationId": "vpc-cidr-assoc-0d2c6151058e0bb31",
+                "CidrBlock": "10.123.0.0/16",
+                "CidrBlockState": {
+                    "State": "associated"
+                }
+            }
+        ],
+        "IsDefault": false,
+        "Tags": []
+    }
+}
+aws ec2 create-tags --resources vpc-02760e418060a042b --tags Key=Name,Value=mp2019
+aws ec2 modify-vpc-attribute --vpc-id vpc-02760e418060a042b --enable-dns-support "{\"Value\":true}"
+aws ec2 modify-vpc-attribute --vpc-id vpc-02760e418060a042b --enable-dns-hostnames "{\"Value\":true}"
+
+# Inside the "mp2019" VPC, create two subnets in us-east-1a and us-east-1b availability zones with IPv4 CIDR blocks 10.123.1.0/24 and 10.123.2.0/24, respectively
+aws ec2 create-subnet --availability-zone us-east-1a --cidr-block 10.123.1.0/24 --vpc-id vpc-02760e418060a042b
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1a",
+        "AvailabilityZoneId": "use1-az2",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.123.1.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-02e7f8a28663075c9",
+        "VpcId": "vpc-02760e418060a042b",
+        "OwnerId": "194400501996",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": [],
+        "SubnetArn": "arn:aws:ec2:us-east-1:194400501996:subnet/subnet-02e7f8a28663075c9"
+    }
+}
+aws ec2 create-subnet --availability-zone us-east-1b --cidr-block 10.123.2.0/24 --vpc-id vpc-02760e418060a042b
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1b",
+        "AvailabilityZoneId": "use1-az4",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.123.2.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-09d4cd596cda2358c",
+        "VpcId": "vpc-02760e418060a042b",
+        "OwnerId": "194400501996",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": [],
+        "SubnetArn": "arn:aws:ec2:us-east-1:194400501996:subnet/subnet-09d4cd596cda2358c"
+    }
+}
+# tag them with "public-subnet-1" and "public-subnet-2" names.
+aws ec2 create-tags --resources subnet-02e7f8a28663075c9 --tags Key=Name,Value=public-subnet-1
+aws ec2 create-tags --resources subnet-09d4cd596cda2358c --tags Key=Name,Value=public-subnet-2
+# Modify both subnets' attributes to enable automatic assignment of public IP addresses. 
+aws ec2 modify-subnet-attribute --subnet-id subnet-02e7f8a28663075c9 --map-public-ip-on-launch
+aws ec2 modify-subnet-attribute --subnet-id subnet-09d4cd596cda2358c --map-public-ip-on-launch
+# Create an Internet gateway and attach it to the VPC.
+aws ec2 create-internet-gateway
+{
+    "InternetGateway": {
+        "Attachments": [],
+        "InternetGatewayId": "igw-02330146873cba878",
+        "Tags": []
+    }
+}
+aws ec2 attach-internet-gateway --internet-gateway-id igw-02330146873cba878 --vpc-id vpc-02760e418060a042b
+aws ec2 describe-route-tables
+{
+    "RouteTables": [
+        {
+            "Associations": [
+                {
+                    "Main": true,
+                    "RouteTableAssociationId": "rtbassoc-4d017f33",
+                    "RouteTableId": "rtb-bc555bc3"
+                }
+            ],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-bc555bc3",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "172.31.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                },
+                {
+                    "DestinationCidrBlock": "0.0.0.0/0",
+                    "GatewayId": "igw-fa42b581",
+                    "Origin": "CreateRoute",
+                    "State": "active"
+                }
+            ],
+            "Tags": [],
+            "VpcId": "vpc-36e2614c",
+            "OwnerId": "194400501996"
+        },
+        {
+            "Associations": [
+                {
+                    "Main": true,
+                    "RouteTableAssociationId": "rtbassoc-04effb0168e2492d9",
+                    "RouteTableId": "rtb-0cbd4a9278c9d85fa"
+                }
+            ],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-0cbd4a9278c9d85fa",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "10.123.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                }
+            ],
+            "Tags": [],
+            "VpcId": "vpc-02760e418060a042b",
+            "OwnerId": "194400501996"
+        }
+    ]
+}
+# Add default route (0.0.0.0/0) to the main route table associated with the VPC, pointing to the Internet gateway.
+aws ec2 create-route --route-table-id rtb-0cbd4a9278c9d85fa --destination-cidr-block 0.0.0.0/0 --gateway-id igw-02330146873cba878
+{
+    "Return": true
+}
+
+Task 8:
+# Create four security groups inside the "mp2019" VPC, with meaningful descriptions and the necessary ingress rules:
+
+# "Admin" (allowing all incoming connections from the public IP address of your EPAM office and, optionally, your сurrent public IP address);
+aws ec2 create-security-group --group-name Admin --vpc-id vpc-02760e418060a042b --description "allowing all incoming connections from the public IP address of your EPAM office and"
+{
+    "GroupId": "sg-0f95c4d17a22b5138"
+}
+aws ec2 authorize-security-group-ingress --group-id sg-0f95c4d17a22b5138 --cidr 37.99.33.31/32 --protocol all --port 0-65535
+
+"ELB" (allowing incoming HTTP connections from anywhere);
+aws ec2 create-security-group --group-name ELB --vpc-id vpc-02760e418060a042b --description "allowing incoming HTTP connections from anywhere"
+{
+    "GroupId": "sg-0b6473d8438254544"
+}
+aws ec2 authorize-security-group-ingress --group-id sg-0b6473d8438254544 --cidr 0.0.0.0/0 --protocol tcp --port 80
+
+"EC2" (allowing incoming HTTP connections from members of "ELB" security group);
+aws ec2 create-security-group --group-name EC2 --vpc-id vpc-02760e418060a042b --description "allowing incoming HTTP connections from members of "ELB" security group"
+{
+    "GroupId": "sg-0cad14d6de72c063f"
+}
+aws ec2 authorize-security-group-ingress --group-id sg-0cad14d6de72c063f --source-group sg-0b6473d8438254544 --protocol tcp --port 80
+
+"RDS" (allowing incoming MySQL connections from members of "EC2" security group).
+aws ec2 create-security-group --group-name RDS --vpc-id vpc-02760e418060a042b --description "allowing incoming MySQL connections from members of "EC2" security group"
+{
+    "GroupId": "sg-0f0e9976cf12fd6d3"
+}
+aws ec2 authorize-security-group-ingress --group-id sg-0f0e9976cf12fd6d3 --source-group sg-0cad14d6de72c063f --protocol tcp --port 3306
+
+Task 9:
+# Create an RDS subnet group named "mp2019-rds-subnets" that includes "public-subnet-1" and "public-subnet-2" subnets created earlier. 
+aws rds create-db-subnet-group --db-subnet-group-name mp2019-rds-subnets --subnet-ids "subnet-09d4cd596cda2358c" "subnet-02e7f8a28663075c9" --db-subnet-group-description "RDS subnet group for MP2019"
+{
+    "DBSubnetGroup": {
+        "DBSubnetGroupName": "mp2019-rds-subnets",
+        "DBSubnetGroupDescription": "RDS subnet group for MP2019",
+        "VpcId": "vpc-02760e418060a042b",
+        "SubnetGroupStatus": "Complete",
+        "Subnets": [
+            {
+                "SubnetIdentifier": "subnet-02e7f8a28663075c9",
+                "SubnetAvailabilityZone": {
+                    "Name": "us-east-1a"
+                },
+                "SubnetStatus": "Active"
+            },
+            {
+                "SubnetIdentifier": "subnet-09d4cd596cda2358c",
+                "SubnetAvailabilityZone": {
+                    "Name": "us-east-1b"
+                },
+                "SubnetStatus": "Active"
+            }
+        ],
+        "DBSubnetGroupArn": "arn:aws:rds:us-east-1:194400501996:subgrp:mp2019-rds-subnets"
+    }
+}
+
+# Create an Internet-accessible RDS instance named "mp2019-db" using db.t2.micro class, MySQL engine, 20 GB of General Purpose SSD, with two VPC security groups attached: "Admin" and "RDS".  The instance must be created in = availability zone (Multi-AZ deployment must be disabled) and use the default parameter group for MySQL engine and the "mp2019-rds-subnets" subnet group. Verify that you can connect to the instance using a MySQL client of your choice.
+aws rds create-db-instance --db-instance-identifier mp2019-db --db-instance-class db.t2.micro --engine mysql --allocated-storage 20 --vpc-security-group-ids "sg-0f95c4d17a22b5138" "sg-0b6473d8438254544" --availability-zone us-east-1a --no-multi-az --db-subnet-group-name mp2019-rds-subnets --master-username admin --master-user-password Rt80#j3I-Cd --publicly-accessible
+
+aws rds create-db-instance --db-instance-identifier mp2020-db --db-instance-class db.t2.micro --engine mysql --allocated-storage 20 --vpc-security-group-ids "sg-0f95c4d17a22b5138" "sg-0b6473d8438254544" --availability-zone us-east-1a --no-multi-az --db-subnet-group-name mp2019-rds-subnets --master-username admin --master-user-password Rt80#j3I-Cd --publicly-accessible
+{
+    "DBInstance": {
+        "DBInstanceIdentifier": "mp2019-db",
+        "DBInstanceClass": "db.t2.micro",
+        "Engine": "mysql",
+        "DBInstanceStatus": "creating",
+        "MasterUsername": "admin",
+        "AllocatedStorage": 20,
+        "PreferredBackupWindow": "08:53-09:23",
+        "BackupRetentionPeriod": 1,
+        "DBSecurityGroups": [],
+        "VpcSecurityGroups": [
+            {
+                "VpcSecurityGroupId": "sg-0f95c4d17a22b5138",
+                "Status": "active"
+            },
+            {
+                "VpcSecurityGroupId": "sg-0b6473d8438254544",
+                "Status": "active"
+            }
+        ],
+        "DBParameterGroups": [
+            {
+                "DBParameterGroupName": "default.mysql5.7",
+                "ParameterApplyStatus": "in-sync"
+            }
+        ],
+        "AvailabilityZone": "us-east-1a",
+        "DBSubnetGroup": {
+            "DBSubnetGroupName": "mp2019-rds-subnets",
+            "DBSubnetGroupDescription": "RDS subnet group for MP2019",
+            "VpcId": "vpc-02760e418060a042b",
+            "SubnetGroupStatus": "Complete",
+            "Subnets": [
+                {
+                    "SubnetIdentifier": "subnet-02e7f8a28663075c9",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1a"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-09d4cd596cda2358c",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1b"
+                    },
+                    "SubnetStatus": "Active"
+                }
+            ]
+        },
+        "PreferredMaintenanceWindow": "fri:06:49-fri:07:19",
+        "PendingModifiedValues": {
+            "MasterUserPassword": "****"
+        },
+        "MultiAZ": false,
+        "EngineVersion": "5.7.22",
+        "AutoMinorVersionUpgrade": true,
+        "ReadReplicaDBInstanceIdentifiers": [],
+        "LicenseModel": "general-public-license",
+        "OptionGroupMemberships": [
+            {
+                "OptionGroupName": "default:mysql-5-7",
+                "Status": "in-sync"
+            }
+        ],
+        "PubliclyAccessible": false,
+        "StorageType": "gp2",
+        "DbInstancePort": 0,
+        "StorageEncrypted": false,
+        "DbiResourceId": "db-E2NWKW5JNUGJ3OMQSNOTMUCZ6Y",
+        "CACertificateIdentifier": "rds-ca-2015",
+        "DomainMemberships": [],
+        "CopyTagsToSnapshot": false,
+        "MonitoringInterval": 0,
+        "DBInstanceArn": "arn:aws:rds:us-east-1:194400501996:db:mp2019-db",
+        "IAMDatabaseAuthenticationEnabled": false,
+        "PerformanceInsightsEnabled": false,
+        "DeletionProtection": false,
+        "AssociatedRoles": []
+    }
+}
+
+Task 10:
+# Generate an EC2 key pair named "mp2019-keypair". 
+aws ec2 create-key-pair --key-name mp2019-keypair
+{
+    "KeyFingerprint": "8e:3d:20:e5:66:ab:9f:41:53:3f:9c:77:af:4a:62:41:61:23:a6:90",
+    "KeyMaterial": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAyei2eQEtU2Xdk/TD4kBVltSVbS2ont7DLQHR50ZDErWZJidlMWWFnmcw8gH7\nYZhYrKMItlf+ewxuJ1lva3QYXnxaaRrl8uHf2pJfKp+hLowWp2SbUW3ugG/Ungr8PxMYiYVxCfil\nl0F+E7Tu2F+UfYmVfT2EonU7kvloAZSLyig40KcJU0PnFcVmqw3yX1F/Cbftimwc1qXEnkD1epo1\nnvackN/uX+zqVIsVXD2qkqbmOoSZIo1C03gKNGs4PyZyrx0OY4VCy9yrxOJwcqySyB82lfIUHwjK\nEb8PQ9xd/eBOsZEsTyX/4vT4wQAGWduj302/HM4MNTK2zr987MLMjQIDAQABAoIBAGhMfCYZw443\nKrTJVX7EePIHMoFJerdGn0/ahtGPbAp4IHqjExTnOpTO/WumNnL9vaDAPzniTqTFkQlmm7XILOZy\nGkn9CRfkMjy4K8za1Oo0l2c1Az6XKQLTweM6DX+Pn7c6ZWAfP3rY7AXGCzNefFg1ADHH24IISRPt\nHhri3ys3nM9npM0O25hT+e5Xhm2N3fCV3nwXoZzI5qUIUVIruYxwwq/UPNe33X1UkpLbICaHLgix\nb7X1qNhbQ2kds2rfDKSNUAX3e8UEsMCTqttsHRcJ9A2dJH6UYLxP5Ss+ByOEG69ykt4PdBXU/P6B\nR9HicSlS21AybnDHFD+N0r/XkMECgYEA6tGv7cAxluyGRxyh73L8BYz9eJJW+Dkdt7ela3OrWpoX\n+PRCCOVCoK4heKliuO8LrY7BOvVm4dfyjvPQoVXYZf9y7PJlTzTsBSbgLt74xXf7vLoSpA6yB5dq\nz+LfCflBaMy59RsVyW8fnwYE4uaso1UuTsvQ0HegBxJvQeloigUCgYEA3B8Vr7i7d6+Io0/rZKEy\nYEmgZ9toNHofcZCqxCD/nWNvrsDoJiYSllGJmX8qG/U/3pwhElmxtUCD5S0lc68LavxjRXy+XB8M\n6z1CR4MqK/6F2Q0XdJKjgLrIJRmsBRsOEFHGdMR2buJ4g7uhFtASYUm9pMXSfSBlM5hNnJ/Z1ukC\ngYEApSpidXd3KfIqLMCuAm+9ZuYZr4I3XBdImN26o87TW0IB1KFyBTHE4KI6dtWl0/CIJUbBEYhl\nGju7p+NE/wYT1QKNwq5opgLSdHk4vJ8nGjZfwgqba/vOK1rMzXaFbU1+PYmqzwWDGJFqC3+/Vh3s\nlmIm1VO1B7zsuay0xwa2+kUCgYA0v7o5ruI1zznGMQuuxLZGvr4SxVBWawGH/Gv/rgyzUbXcwduf\n8LW5kfaQcxnLM11H4lBGjnn4fmpdDBGShFsPG0ZKy5buin5VDQwKCROdEVRP7EQ3qkBGQ/xcb6d6\nXb5kCMSvDLl43wqUPu1egyQ0bjBlAQbs90tpLtFCfEf+qQKBgHa0+mdVLsP7Twal0HtyDIgAqjzh\neUl4+9VkL4suSl7ugnOMjOEYQ1QcaNA8PoJgiv5XZcBDY4C47KwQowtRvXF3Lj/BihkkNp9eMrS+\nEZwg1JRT0P3wnWHX7F7WzAEKrcLND1e4i9OwuNA6B/pijyuD8c+ccqn5DlCVyqUYPCYO\n-----END RSA PRIVATE KEY-----",
+    "KeyName": "mp2019-keypair"
+}
+# Create a t2.micro EC2 instance with the name tag "webserver" inside "public-subnet-1" subnet, using Amazon Linux 2 AMI, "mp2019-keypair" keypair, "Admin" and "EC2" security groups, and a public IP address. 
+aws ec2 run-instances --image-id ami-0c6b1d09930fac512 --instance-type t2.micro --key-name mp2019-keypair --subnet-id subnet-02e7f8a28663075c9 --security-group-ids "sg-0f95c4d17a22b5138" "sg-0cad14d6de72c063f" --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=webserver}]' --associate-public-ip-address
+{
+    "Groups": [],
+    "Instances": [
+        {
+            "AmiLaunchIndex": 0,
+            "ImageId": "ami-0c6b1d09930fac512",
+            "InstanceId": "i-0be7bf634f4f5a585",
+            "InstanceType": "t2.micro",
+            "KeyName": "mp2019-keypair",
+            "LaunchTime": "2019-06-13T08:40:22.000Z",
+            "Monitoring": {
+                "State": "disabled"
+            },
+            "Placement": {
+                "AvailabilityZone": "us-east-1a",
+                "GroupName": "",
+                "Tenancy": "default"
+            },
+            "PrivateDnsName": "ip-10-123-1-68.ec2.internal",
+            "PrivateIpAddress": "10.123.1.68",
+            "ProductCodes": [],
+            "PublicDnsName": "",
+            "State": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "StateTransitionReason": "",
+            "SubnetId": "subnet-02e7f8a28663075c9",
+            "VpcId": "vpc-02760e418060a042b",
+            "Architecture": "x86_64",
+            "BlockDeviceMappings": [],
+            "ClientToken": "",
+            "EbsOptimized": false,
+            "Hypervisor": "xen",
+            "NetworkInterfaces": [
+                {
+                    "Attachment": {
+                        "AttachTime": "2019-06-13T08:40:22.000Z",
+                        "AttachmentId": "eni-attach-03166122ff7a980b4",
+                        "DeleteOnTermination": true,
+                        "DeviceIndex": 0,
+                        "Status": "attaching"
+                    },
+                    "Description": "",
+                    "Groups": [
+                        {
+                            "GroupName": "Admin",
+                            "GroupId": "sg-0f95c4d17a22b5138"
+                        },
+                        {
+                            "GroupName": "EC2",
+                            "GroupId": "sg-0cad14d6de72c063f"
+                        }
+                    ],
+                    "Ipv6Addresses": [],
+                    "MacAddress": "12:29:b9:d5:c6:98",
+                    "NetworkInterfaceId": "eni-036f0995b632fc7d1",
+                    "OwnerId": "194400501996",
+                    "PrivateDnsName": "ip-10-123-1-68.ec2.internal",
+                    "PrivateIpAddress": "10.123.1.68",
+                    "PrivateIpAddresses": [
+                        {
+                            "Primary": true,
+                            "PrivateDnsName": "ip-10-123-1-68.ec2.internal",
+                            "PrivateIpAddress": "10.123.1.68"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Status": "in-use",
+                    "SubnetId": "subnet-02e7f8a28663075c9",
+                    "VpcId": "vpc-02760e418060a042b"
+                }
+            ],
+            "RootDeviceName": "/dev/xvda",
+            "RootDeviceType": "ebs",
+            "SecurityGroups": [
+                {
+                    "GroupName": "Admin",
+                    "GroupId": "sg-0f95c4d17a22b5138"
+                },
+                {
+                    "GroupName": "EC2",
+                    "GroupId": "sg-0cad14d6de72c063f"
+                }
+            ],
+            "SourceDestCheck": true,
+            "StateReason": {
+                "Code": "pending",
+                "Message": "pending"
+            },
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "webserver"
+                }
+            ],
+            "VirtualizationType": "hvm",
+            "CpuOptions": {
+                "CoreCount": 1,
+                "ThreadsPerCore": 1
+            },
+            "CapacityReservationSpecification": {
+                "CapacityReservationPreference": "open"
+            }
+        }
+    ],
+    "OwnerId": "194400501996",
+    "ReservationId": "r-009df5d1d2fc3bac0"
+}
+SSH into "webserver", and install Apache httpd, php and php-mysql packages. Set up a simple index.php script in Apache httpd's document root that connects to MySQL database (RDS) and indicates if it succeeded. Start Apache httpd and check that index.php is served on the instance's HTTP port, and that MySQL connection to the RDS instance is successful.
+
+aws ec2 describe-instances
+{
+    "Reservations": [
+        {
+            "Groups": [],
+            "Instances": [
+                {
+                    "AmiLaunchIndex": 0,
+                    "ImageId": "ami-0c6b1d09930fac512",
+                    "InstanceId": "i-0be7bf634f4f5a585",
+                    "InstanceType": "t2.micro",
+                    "KeyName": "mp2019-keypair",
+                    "LaunchTime": "2019-06-13T08:40:22.000Z",
+                    "Monitoring": {
+                        "State": "disabled"
+                    },
+                    "Placement": {
+                        "AvailabilityZone": "us-east-1a",
+                        "GroupName": "",
+                        "Tenancy": "default"
+                    },
+                    "PrivateDnsName": "ip-10-123-1-68.ec2.internal",
+                    "PrivateIpAddress": "10.123.1.68",
+                    "ProductCodes": [],
+                    "PublicDnsName": "ec2-54-174-39-57.compute-1.amazonaws.com",
+                    "PublicIpAddress": "54.174.39.57",
+                    "State": {
+                        "Code": 16,
+                        "Name": "running"
+                    },
+                    "StateTransitionReason": "",
+                    "SubnetId": "subnet-02e7f8a28663075c9",
+                    "VpcId": "vpc-02760e418060a042b",
+                    "Architecture": "x86_64",
+                    "BlockDeviceMappings": [
+                        {
+                            "DeviceName": "/dev/xvda",
+                            "Ebs": {
+                                "AttachTime": "2019-06-13T08:40:23.000Z",
+                                "DeleteOnTermination": true,
+                                "Status": "attached",
+                                "VolumeId": "vol-016f15f8db1bd6b98"
+                            }
+                        }
+                    ],
+                    "ClientToken": "",
+                    "EbsOptimized": false,
+                    "EnaSupport": true,
+                    "Hypervisor": "xen",
+                    "NetworkInterfaces": [
+                        {
+                            "Association": {
+                                "IpOwnerId": "amazon",
+                                "PublicDnsName": "ec2-54-174-39-57.compute-1.amazonaws.com",
+                                "PublicIp": "54.174.39.57"
+                            },
+                            "Attachment": {
+                                "AttachTime": "2019-06-13T08:40:22.000Z",
+                                "AttachmentId": "eni-attach-03166122ff7a980b4",
+                                "DeleteOnTermination": true,
+                                "DeviceIndex": 0,
+                                "Status": "attached"
+                            },
+                            "Description": "",
+                            "Groups": [
+                                {
+                                    "GroupName": "Admin",
+                                    "GroupId": "sg-0f95c4d17a22b5138"
+                                },
+                                {
+                                    "GroupName": "EC2",
+                                    "GroupId": "sg-0cad14d6de72c063f"
+                                }
+                            ],
+                            "Ipv6Addresses": [],
+                            "MacAddress": "12:29:b9:d5:c6:98",
+                            "NetworkInterfaceId": "eni-036f0995b632fc7d1",
+                            "OwnerId": "194400501996",
+                            "PrivateDnsName": "ip-10-123-1-68.ec2.internal",
+                            "PrivateIpAddress": "10.123.1.68",
+                            "PrivateIpAddresses": [
+                                {
+                                    "Association": {
+                                        "IpOwnerId": "amazon",
+                                        "PublicDnsName": "ec2-54-174-39-57.compute-1.amazonaws.com",
+                                        "PublicIp": "54.174.39.57"
+                                    },
+                                    "Primary": true,
+                                    "PrivateDnsName": "ip-10-123-1-68.ec2.internal",
+                                    "PrivateIpAddress": "10.123.1.68"
+                                }
+                            ],
+                            "SourceDestCheck": true,
+                            "Status": "in-use",
+                            "SubnetId": "subnet-02e7f8a28663075c9",
+                            "VpcId": "vpc-02760e418060a042b"
+                        }
+                    ],
+                    "RootDeviceName": "/dev/xvda",
+                    "RootDeviceType": "ebs",
+                    "SecurityGroups": [
+                        {
+                            "GroupName": "Admin",
+                            "GroupId": "sg-0f95c4d17a22b5138"
+                        },
+                        {
+                            "GroupName": "EC2",
+                            "GroupId": "sg-0cad14d6de72c063f"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Tags": [
+                        {
+                            "Key": "Name",
+                            "Value": "webserver"
+                        }
+                    ],
+                    "VirtualizationType": "hvm",
+                    "CpuOptions": {
+                        "CoreCount": 1,
+                        "ThreadsPerCore": 1
+                    },
+                    "CapacityReservationSpecification": {
+                        "CapacityReservationPreference": "open"
+                    },
+                    "HibernationOptions": {
+                        "Configured": false
+                    }
+                }
+            ],
+            "OwnerId": "194400501996",
+            "ReservationId": "r-009df5d1d2fc3bac0"
+        }
+    ]
+}
+
+ssh -i mp2019-keypair.pem ec2-user@54.174.39.57
+sudo yum install httpd
+sudo yum install php
+sudo yum install php-mysql
+cd /var/www/html/
+sudo touch index.php
+sudo vim index.php
+
+<?php
+$servername = "mp2019-db";
+$username = "admin";
+$password = "Rt80#j3I-Cd";
+
+// Create connection
+$conn = mysqli_connect($servername, $username, $password);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+echo "Connected successfully";
+?>
+
+sudo service httpd start (start http)
+sudo chkconfig httpd on (add to autostart)
+
+Task 11:
+# Create a new IAM role named "full-s3-access-role" that can be assumed by EC2 instances.
+aws iam create-role --role-name full-s3-access-role --assume-role-policy-document file://ec2_assume_role.json 
+{
+    "Role": {
+        "Path": "/",
+        "RoleName": "full-s3-access-role",
+        "RoleId": "AROAS2QZMIDWMDJIB46U7",
+        "Arn": "arn:aws:iam::194400501996:role/full-s3-access-role",
+        "CreateDate": "2019-06-16T08:06:06Z",
+        "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": {
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": "ec2.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+            }
+        }
+    }
+}
+# Attach a new access policy named "full-s3-access-policy" to the role you created, allowing full access to S3 resources. 
+aws iam create-role --role-name full-s3-access-role --assume-role-policy-document full-s3-access-policy.json
+aws iam put-role-policy --role-name full-s3-access-role --policy-name full-s3-access-policy --policy-document file://full-s3-access-policy.json
+
+# Create an instance profile named "full-s3-access-profile" and add "full-s3-access-role" role to it. 
+aws iam create-instance-profile --instance-profile-name full-s3-access-profile
+{
+    "InstanceProfile": {
+        "Path": "/",
+        "InstanceProfileName": "full-s3-access-profile",
+        "InstanceProfileId": "AIPAS2QZMIDWPOYPT4T4G",
+        "Arn": "arn:aws:iam::194400501996:instance-profile/full-s3-access-profile",
+        "CreateDate": "2019-06-16T08:25:57Z",
+        "Roles": []
+    }
+}
+aws iam add-role-to-instance-profile --instance-profile-name full-s3-access-profile --role-name full-s3-access-role
+
+# Associate "full-s3-access-profile" instance profile with the "webserver" EC2 instance created eariler. 
+aws ec2 associate-iam-instance-profile --iam-instance-profile Name=full-s3-access-profile --instance-id i-0be7bf634f4f5a585
+{
+    "IamInstanceProfileAssociation": {
+        "AssociationId": "iip-assoc-046fa65c2a0f0a8f9",
+        "InstanceId": "i-0be7bf634f4f5a585",
+        "IamInstanceProfile": {
+            "Arn": "arn:aws:iam::194400501996:instance-profile/full-s3-access-profile",
+            "Id": "AIPAS2QZMIDWPOYPT4T4G"
+        },
+        "State": "associated"
+    }
+}
+
+# SSH into ""webserver" and verify that you can read from and write to "<your-prefix>-backup" S3 bucket from within the server using AWS CLI without configuring AWS credentials.
+aws s3 ls s3://kutzhanov-backup
+                           PRE one/
+                           PRE two/
+[ec2-user@ip-10-123-1-68 ~]$ ls
+[ec2-user@ip-10-123-1-68 ~]$ touch copied_from_webserver.txt
+[ec2-user@ip-10-123-1-68 ~]$ ls
+copied_from_webserver.txt
+[ec2-user@ip-10-123-1-68 ~]$ vi copied_from_webserver.txt 
+[ec2-user@ip-10-123-1-68 ~]$ aws s3 cp copied_from_webserver.txt s3://kutzhanov-backup
+upload: ./copied_from_webserver.txt to s3://kutzhanov-backup/copied_from_webserver.txt
+
+Task 12:
+# Create an Internet-facing Classic Load Balancer named "mp2019-elb" connected to "public-subnet-1" and "public-subnet-2", using HTTP and port 80 for both LoadBalancer and Instance sides of its single listener. Attach "Admin" and "ELB" security groups to the load balancer.
+aws elb create-load-balancer --load-balancer-name mp2019-elb --listeners "Protocol=HTTP,LoadBalancerPort=80,InstanceProtocol=HTTP,InstancePort=80" --subnets "subnet-02e7f8a28663075c9" "subnet-09d4cd596cda2358c" --security-groups "sg-0f95c4d17a22b5138" "sg-0b6473d8438254544" 
+{
+    "DNSName": "mp2019-elb-1868276525.us-east-1.elb.amazonaws.com"
+}
+
+# Use "/index.php" path and an interval of 10 seconds for health check.
+aws elb configure-health-check --load-balancer-name mp2019-elb --health-check Target=HTTP:80/index.php,Interval=10,UnhealthyThreshold=2,HealthyThreshold=2,Timeout=5
+{
+    "HealthCheck": {
+        "Target": "HTTP:80/index.php",
+        "Interval": 10,
+        "Timeout": 5,
+        "UnhealthyThreshold": 2,
+        "HealthyThreshold": 2
+    }
+}
+# Register the "webserver" EC2 instance you've created with the load balancer. 
+aws elb register-instances-with-load-balancer --load-balancer-name mp2019-elb --instances i-0be7bf634f4f5a585
+{
+    "Instances": [
+        {
+            "InstanceId": "i-0be7bf634f4f5a585"
+        }
+    ]
+}
+
+# Verify that "webserver" transitions to InService state and that index.php is served when you open the load balancer's DNS name in the browser.
+aws elb describe-instance-health --load-balancer-name mp2019-elb
+{
+    "InstanceStates": [
+        {
+            "InstanceId": "i-0be7bf634f4f5a585",
+            "State": "InService",
+            "ReasonCode": "N/A",
+            "Description": "N/A"
+        }
+    ]
+}
+# After that, delete the "webserver" EC2 instance.
+aws ec2 terminate-instances --instance-ids i-0be7bf634f4f5a585
+{
+    "TerminatingInstances": [
+        {
+            "CurrentState": {
+                "Code": 48,
+                "Name": "terminated"
+            },
+            "InstanceId": "i-0be7bf634f4f5a585",
+            "PreviousState": {
+                "Code": 80,
+                "Name": "stopped"
+            }
+        }
+    ]
+}
+
+Task 13:
+# Create a Launch Configuration for EC2 Auto Scaling named "mp2019-alc", using instance size t2.micro, Amazon Linux 2 AMI, "full-s3-access-profile" instance profile, "Admin" and "EC2" security groups. In the launch configuration's "user data", specify a bash script that installs Apache httpd, php and php-mysql and sets up the index.php script (the same one previously used on "webserver") non-interactively.
+aws autoscaling create-launch-configuration --launch-configuration-name mp2019-alc --instance-type t2.micro --image-id ami-0c6b1d09930fac512 --iam-instance-profile full-s3-access-profile --security-groups "sg-0f95c4d17a22b5138" "sg-0cad14d6de72c063f" --user-data file://install_httpd.sh
+
+Task 14:
+# Create an EC2 Auto Scaling group named "mp2019-asg" based on "mp2019-alc" Launch Configuration. The group must use "public-subnet-1" and "public-subnet-2", have a minimum and maximum size of 2 instances, and receive traffic from "mp2019-elb" load-balancer. The health-check mode must be set to "ELB", with a grace period of 5 minutes. 
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name mp2019-asg --launch-configuration-name mp2019-alc --min-size 2 --max-size 2 --vpc-zone-identifier subnet-02e7f8a28663075c9,subnet-09d4cd596cda2358c --load-balancer-names mp2019-elb --health-check-type ELB --health-check-grace-period 300
+
+# When the group is created, verify that its EC2 instances automatically launch and transition to InService state in the load-balancer, and that you can see the expected output of index.php (indication of successful connection to "mp2019-db" RDS instance) when accessing the load-balancer's URL. Also, verify that you can upload files from inside the EC2 instances to "<your-prefix>-backup" S3 bucket without specifying AWS credentials.
+aws autoscaling describe-auto-scaling-groups
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "mp2019-asg",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:194400501996:autoScalingGroup:90b0cd32-2d0b-4a05-8a95-9d88a6e025b5:autoScalingGroupName/mp2019-asg",
+            "LaunchConfigurationName": "mp2019-alc",
+            "MinSize": 2,
+            "MaxSize": 2,
+            "DesiredCapacity": 2,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1a",
+                "us-east-1b"
+            ],
+            "LoadBalancerNames": [
+                "mp2019-elb"
+            ],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "ELB",
+            "HealthCheckGracePeriod": 300,
+            "Instances": [
+                {
+                    "InstanceId": "i-009625bad02cf0033",
+                    "AvailabilityZone": "us-east-1b",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchConfigurationName": "mp2019-alc",
+                    "ProtectedFromScaleIn": false
+                },
+                {
+                    "InstanceId": "i-08864d11962e7db7d",
+                    "AvailabilityZone": "us-east-1a",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchConfigurationName": "mp2019-alc",
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2019-06-16T09:43:49.310Z",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-09d4cd596cda2358c,subnet-02e7f8a28663075c9",
+            "EnabledMetrics": [],
+            "Tags": [],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::194400501996:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+
+Task 15:
+# Create a Simple Notification Service topic named "mp2019-instance-terminated" and subscribe your email address to it. 
+aws sns create-topic --name mp2019-instance-terminated
+{
+    "TopicArn": "arn:aws:sns:us-east-1:194400501996:mp2019-instance-terminated"
+}
+aws sns subscribe --topic-arn arn:aws:sns:us-east-1:194400501996:mp2019-instance-terminated --protocol email --notification-endpoint timur_kutzhanov@epam.com
+{
+    "SubscriptionArn": "pending confirmation"
+}
+
+aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:194400501996:mp2019-instance-terminated
+{
+    "Subscriptions": [
+        {
+            "SubscriptionArn": "arn:aws:sns:us-east-1:194400501996:mp2019-instance-terminated:7f38901a-653f-4639-b605-5a9e535af0b7",
+            "Owner": "194400501996",
+            "Protocol": "email",
+            "Endpoint": "timur_kutzhanov@epam.com",
+            "TopicArn": "arn:aws:sns:us-east-1:194400501996:mp2019-instance-terminated"
+        }
+    ]
+}
+
+Configure the "mp2019-asg" auto-scaling group to send notifications to "mp2019-instance-terminated" topic whenever an instace belonging to the group is terminated. Verify that the notification configuration actually works by shutting down Apache httpd on one of the running instances in the "mp2019-asg" auto-scaling group. The instance must be automatically terminated and a notification about that must be delivered to your email address by SNS.
+# aws autoscaling put-notification-configuration --auto-scaling-group-name mp2019-asg --topic-arn arn:aws:sns:us-east-1:194400501996:mp2019-instance-terminated --notification-type autoscaling:TEST_NOTIFICATION

@@ -1,0 +1,263 @@
+- подготавливаем темплейты CloudFormation
+- подготавливаем докер файлы для поднятия сервисов, пушаем образы в регистри
+- подготавливаем докер композ файл
+- поднимаем инфраструктуру на основе CloudFormation темплейтов
+- копируем все на одну из машин которая мастер
+- деплоим сервисы
+
+Swarm которую нужно знать, он не умеет работать с энвайронмент переменными напрямую. Учитывая это нужно внести правки в php скрипт который проверяет соединение до базы данные. Еще один момент что имя переменных которые передаются для db сервера из композ файла должны содержать суффикс _FILE, в этом случае entrypoint скрипт распознает их как переменные которые нужно получить из файла, MySQL команда специально для этих целей внесла изменения в скрипт и включила вот эту функцию
+file_env() {
+	local var="$1"
+	local fileVar= "${var}_FILE"
+	local def="${2:-}"
+	if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
+		echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
+		exit 1
+	fi
+	local val="$def"
+	if [ "${!var:-}" ]; then
+		val="${!var}"
+	elif [ "${!fileVar:-}" ]; then
+		val="$(< "${!fileVar}")"
+	fi
+	export "$var"="$val"
+	unset "$fileVar"
+}
+
+переменные в этом случае объявляются соответсвующим образом
+file_env 'MYSQL_USER'
+
+Task 1
+
+Create s3 bucket called 'mp2019-docker-' in us-east-1 region
+aws s3 mb s3://mp2019-docker-kutzhanov --region us-east-1
+
+Task 2
+
+Update CloudFormation templates from second module with the following changes:
+
+'networking' template is immutable
+
+'security-groups' template should have two groups:
+	'Admin' (allowing all incoming connections from your IP address and the IP address of Karaganda EPAM office);
+	'Docker' (allowing incoming connection on TCP port 2377, TCP and UDP port 7946, UDP port 4789 and TCP port 3306 from itself)
+
+The security group 'sg-078c35eab3dc89162' does not exist in default VPC 'vpc-36e2614c' (Service: AmazonEC2; Status Code: 400; Error Code: InvalidGroup.NotFound; Request ID: 85fa75c4-79f2-43c1-a07a-13aec02ab995)
+
+remove 'database' template
+
+'web' template should be updated according to the following description:
+	input parameters:
+		subnet IDs
+		s3 bucket name
+		security group IDs for EC2 instances
+		EC2 instance class (a list of allowed values must be pre-defined, 't2.micro' being the default)
+		minimum ASG instance count (a default value must be pre-defined)
+		maximum ASG instance count (a default value must be pre-defined)
+		EC2 key pair name
+	rename from 'web' to 'docker-nodes'
+	remove ELB from the template
+	create 's3-access-role' IAM role that can be assumed by EC2 instances
+	create 's3-access-policy' IAM policy allowing list and get objects from mp2019-docker S3 bucket and attach to 's3-access-role' role
+	create 's3-access-profile' instance profile and associate 's3-access-role' role with it
+	include 's3-access-profile' instance profile into ASG Lunch Configuration
+	update ASG health check from 'ELB' to 'EC2'
+	unlink ASG with ELB
+	Lunch Configuration User Data script has to perform the following actions:
+	install latest version of docker engine community edition (should be not lower than 18.6) 
+	ensure docker service started and will be started in system boot
+	install docker compose via pip
+	the template should not have any output
+
+          Statement:
+            -
+              Effect: "Allow"
+                Service:
+                  - "" 
+              Action: 
+                - ""
+  AdminSGid:
+    Description: "Admin security group ID"
+    Type: String
+  DockerSGid:
+    Description: "Docker security group ID"
+    Type: String
+
+
+
+'main' template should be updated according to the following description:
+	remove all parameters and resources related to RDS
+	add s3 bucket name into paramaters
+	URLs for nested templates refer to 'cf_templates' directory of 'mp2019-docker' s3 bucket
+	define minimum and maximum ASG instance count to 3
+
+Upload nested templates into 'cf_templates' directory of 'mp2019-docker' s3 bucket 
+
+https://mp2019-docker-kutzhanov.s3.amazonaws.com/cf_templates/docker-nodes.yml
+
+aws cloudformation create-stack --stack-name main --template-body file://main.yml --parameters ParameterKey=keyPair,ParameterValue=mp2019-keypair ParameterKey=S3BucketName,ParameterValue=mp2019-docker-kutzhanov
+
+Circular dependency between resources: [DockerSG]
+
+aws cloudformation create-stack --stack-name main --template-body file://security_groups.yml --parameters ParameterKey=VPCid,ParameterValue=vpc-02760e418060a042b --capabilities CAPABILITY_NAMED_IAM
+
+Embedded stack arn:aws:cloudformation:us-east-1:194400501996:stack/main-DockerStack-XVMGQL4HT1LX/a0ee0f80-cfe4-11e9-af2b-0a3a983b5e88 was not successfully created: The following resource(s) failed to create: [S3AccessRole]. 
+
+Has prohibited field Resource (Service: AmazonIdentityManagement; Status Code: 400; Error Code: MalformedPolicyDocument; Request ID: c7c6391a-cff3-11e9-a9aa-a5142eded57c)
+
+Task 3
+
+Create Apache Load Balancer configuration which will balance traffic between 'web' service containers by Round Robin method.
+Create Dockerfile to setup Apache Load Balancer with the following features:
+
+
+source image is latest amazonlinux;
+image maintainer is defined;
+install Apache web server;
+copy Load Balancer configuration;
+port 80 exposed;
+ensure that Apache service is up and running;
+
+
+Build image for Load Balancer and push to Docker Hub
+
+
+Task 4
+
+Create 'index.php' file which shows host name and indicates that connection from web service container to MySQL database was successfull or not. Create simple web server configuration listening on port 8080, root for documents in 'mp2019' directory and 'index.php' as directory index.
+Create Dockerfile to setup Apache Web Server with the following features:
+
+
+source image is latest amazonlinux;
+image maintainer is defined;
+Apache, php and php-mysql installation happens during the container building process;
+ensure root directory exist;
+copy 'index.php' to root directory;
+copy web server configuration;
+port 8080 exposed;
+ensure that Apache service is up and running;
+
+
+Build image for Web Server and push to Docker Hub
+
+
+Task 5
+
+Create Dockerfile to setup MySQL Server with the following features:
+
+
+source image is latest amazonlinux;
+image maintainer is defined;
+install latest version of MySQL 8;
+use entrypoint.sh as entrypoint(!!! Do not forget make it executable);
+port 3306 exposed;
+ensure that MySQL service is up and running;
+
+
+Build image for Database Server and push to Docker Hub
+
+
+Task 6
+
+Create Docker Compose file which deploy a list of resources:
+
+
+Definitions for 'frontend' and 'backend' attacheble overlay networks;
+Definitions for external Docker secrets 'mysql_user', 'mysql_pass', 'mysql_root_pass' and 'mysql_db';
+Definitions for Docker configs 'lb_config' and 'web_config' with Load Balancer Apache configuration and Web Server virtual host settings content;
+Definitions for 'web_data' volume;
+Docker Swarm service called 'balancer' with the configuration:
+
+
+based on Load Balancer image located in Docker Hub;
+port 80 is exposed;
+Apache configuration defined in Docker config;
+located in 'frontend' network;
+the service has one replica;
+restart policy is 'on-failure';
+reserve container resources by 25% of CPU and 256MB Memory;
+limit container resources by 50% of CPU and 512MB Memory;
+ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
+add label 'service' with value 'load_balancer';
+
+
+Docker Swarm service called 'web' with the configuration:
+
+
+based on Web Server image located in Docker Hub;
+port 8080 is exposed;
+Apache configuration for virtual host defined in Docker config;
+located in 'frontend' and 'backend' networks;
+the service has two replicas;
+restart policy is 'on-failure';
+reserve container resources by 25% of CPU and 256MB Memory;
+limit container resources by 50% of CPU and 512MB Memory;
+ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
+add label 'service' with value 'web_server';
+mount 'web_data' volume into root directory according to virtual host configuration on the service containers;
+evironment variables for MySQL user, password, database name and server name with values defined in external Docker secrets exclude server name;
+
+
+Docker Swarm service called 'db' with the configuration:
+
+
+based on Database Server image located in Docker Hub;
+port 3306 is exposed;
+located in 'backend' network;
+the service has one replica;
+restart policy is 'on-failure';
+reserve container resources by 50% of CPU and 512MB Memory;
+limit container resources by 70% of CPU and 1024MB Memory;
+ensure that the service containers will be deployed only on nodes where 'role' label defined in 'back';
+add label 'service' with value 'database_server';
+evironment variables for MySQL user, password, root user password and database name with values defined in external Docker secrets;
+
+
+Task 7
+
+Deploy Docker infrastructure trough 'main' template
+
+
+Task 8
+
+Initiate Docker Swarm cluster on one of the machine and join two other as workers
+
+
+Task 9
+
+Update two nodes with label 'role' which has value 'front' and one with value 'back'
+
+
+Task 10
+
+Upload Docker Compose file, Load balancer configuration and Web Server virtual host settings from local machine to 'mp2019-docker' S3 bucket. Download the content on Docker Swarm manager node
+
+
+Task 11
+
+Create Docker secrets 'mysql_user', 'mysql_pass', 'mysql_root_pass', 'mysql_db' which contain values for MySQL user, password, root user password and database name
+
+
+Task 12
+
+Deploy Docker Swarm stack called 'mp2019' from Compose file
+
+
+Task 13
+
+Verify that all replicas up and running. Index page has to indicate that connection to MySQL database is successfull from both Web service containers.
+
+
+Expected results
+
+
+'balancer', 'web' and 'db' Docker Swarm Services are running including all replicas.
+Docker secrets 'mysql_user', 'mysql_pass', 'mysql_root_pass', 'mysql_db' are created.
+'web_data' Docker volume contains 'index.php'.
+Overlay networks 'frontend' and 'backend' are created.
+Web Server containers have IP addresses from both 'frontend' and 'backend' networks.
+Docker configs for Load Balancer cobfiguration and Web Server virtual host configuration are created.
+Database service containers located on a node with label 'role' defined in 'back'. Load Balancer and Web Server containers located on nodes with label 'role' defined in 'front'.
+'index.php' is available on public IP address and port 80 of of node where Load balancer container and indicates that connection to MySQL database is successfull.
+'mp2019-docker' S3 bucket contain 'networking', 'security-groups' and 'docker-nodes' templates in 'cf_templates' folder as well as 'docker-compose.yml' file, Load Balancer cobfiguration file, Web Server virtual host configuration file.
+Docker Swarm nodes are able to list and get objects from 'mp2019-docker' S3 bucket.

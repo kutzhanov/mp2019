@@ -1,0 +1,15 @@
+{
+  "Id": "Policy1559913168572",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1559913163854",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::kutzhanov-backup/two/*",
+      "Principal": "*"
+    }
+  ]
+}

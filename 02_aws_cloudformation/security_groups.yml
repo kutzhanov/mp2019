@@ -1,0 +1,104 @@
+Parameters:
+  VPCid:
+    Description: "VPC ID"
+    Type: String
+
+Resources:
+  AdminSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allow all incoming connections from your IP address and the IP address of Karaganda EPAM office
+      GroupName: Admin
+      VpcId: !Ref VPCid
+      SecurityGroupIngress:
+        - CidrIp: 217.196.26.66/32
+          IpProtocol: "-1"
+#      SecurityGroupEgress:
+#        - CidrIp: 0.0.0.0/0
+#          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: CF_AdminSG
+
+  ELBSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allowing incoming HTTP connections from anywhere
+      GroupName: ELB
+      VpcId: !Ref VPCid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+#      SecurityGroupEgress:
+#        - IpProtocol: tcp
+#          FromPort: 80
+#          ToPort: 80
+#          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: CF_ELBSG
+
+  EC2SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allowing incoming HTTP connections from members of ELB security group
+      GroupName: EC2
+      VpcId: !Ref VPCid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+#          CidrIp: 0.0.0.0/0
+          SourceSecurityGroupId: !Ref EC2SG
+      Tags:
+        - Key: Name
+          Value: CF_EC2SG
+#  EC2IngressSG:
+#   Type: 'AWS::EC2::SecurityGroupIngress'
+#   DependsOn: [ EC2SG, ELBSG ]
+#   Properties:
+#      GroupId: !GetAtt EC2SG.GroupId
+#      IpProtocol: tcp
+#      FromPort: 80
+#      ToPort: 80
+#      SourceSecurityGroupId: !GetAtt ELBSG.GroupId
+
+  RDSSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allowing incoming MySQL connections from members of EC2 security group
+      GroupName: RDS
+      VpcId: !Ref VPCid
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref EC2SG
+      Tags:
+        - Key: Name
+          Value: CF_RDSSG
+#  RDIngressSG:
+#   Type: 'AWS::EC2::SecurityGroupIngress'
+#   DependsOn: [ EC2SG, RDSSG ]
+#   Properties:
+#      GroupId: !GetAtt RDSSG.GroupId
+#      IpProtocol: tcp
+#      FromPort: 3306
+#      ToPort: 3306
+#      SourceSecurityGroupId: !GetAtt EC2SG.GroupId
+
+Outputs:
+  AdminSGid:
+    Description: Admin SecurityGroup ID
+    Value: !GetAtt AdminSG.GroupId
+  ELBSGid:
+    Description: ELB SecurityGroup ID
+    Value: !GetAtt ELBSG.GroupId
+  EC2SGid:
+    Description: EC2 SecurityGroup ID
+    Value: !GetAtt EC2SG.GroupId
+  RDSSGid:
+    Description: RDS SecurityGroup ID
+    Value: !GetAtt RDSSG.GroupId

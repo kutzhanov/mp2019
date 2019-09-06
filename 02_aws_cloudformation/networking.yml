@@ -1,0 +1,111 @@
+Parameters:
+  cidrBlock:
+    Description: "CIDR block for VPC."
+    Type: String
+    Default: 192.168.0.0/16
+  cidrBlockSubnetA:
+    Description: "CIDR block for Subnet A."
+    Type: String
+    Default: 192.168.1.0/24
+  cidrBlockSubnetB:
+    Description: "CIDR block for Subnet B."
+    Type: String
+    Default: 192.168.2.0/24
+Resources:
+  # VPC (with "EnableDnsSupport" and "EnableDnsHostnames" options enabled)
+  Mp2019VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref cidrBlock
+      EnableDnsHostnames: 'true'
+      EnableDnsSupport: 'true'
+      InstanceTenancy: 'default'
+      Tags:
+        - Key: Name
+          Value: Mp2019VPC
+  # non-default route table
+  MP2019RT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: Mp2019VPC
+      Tags:
+      - Key: Name
+        Value: MP2019RT
+  # two subnets in different availability zones associated with the route table (with "MapPublicIpOnLaunch" option enabled);
+  MP2019SubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: Mp2019VPC
+      CidrBlock: !Ref cidrBlockSubnetA
+      AvailabilityZone: "us-east-1a"
+      MapPublicIpOnLaunch: true
+      Tags:
+      - Key: Name
+        Value: MP2019SubnetA
+  # Subnet A Association with Route Table
+  MP2019SubnetRTAssociationA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: MP2019RT
+    Properties:
+      SubnetId:
+        Ref: MP2019SubnetA
+      RouteTableId:
+        Ref: MP2019RT
+  # two subnets in different availability zones associated with the route table (with "MapPublicIpOnLaunch" option enabled);
+  MP2019SubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: Mp2019VPC
+      CidrBlock: !Ref cidrBlockSubnetB
+      AvailabilityZone: "us-east-1b"
+      MapPublicIpOnLaunch: true
+      Tags:
+      - Key: Name
+        Value: MP2019SubnetB
+  # Subnet B Association with Route Table
+  MP2019SubnetRTAssociationB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn: MP2019RT
+    Properties:
+      SubnetId:
+        Ref: MP2019SubnetB
+      RouteTableId:
+        Ref: MP2019RT
+  # Internet gateway attached to the VPC
+  MP2019InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: MP2019InternetGateway
+  MP2019AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn: MP2019InternetGateway
+    Properties:
+      VpcId:
+        Ref: Mp2019VPC
+      InternetGatewayId:
+        Ref: MP2019InternetGateway
+  # default route in the route table pointing to the Internet gateway.
+  MP2019Route:
+    Type: AWS::EC2::Route
+    DependsOn: MP2019InternetGateway
+    Properties:
+       RouteTableId:
+         Ref: MP2019RT
+       DestinationCidrBlock: 0.0.0.0/0
+       GatewayId:
+         Ref: MP2019InternetGateway
+Outputs:
+  VPCid:
+    Description: VPC ID
+    Value: !Ref Mp2019VPC
+  subnetAid:
+    Description: subnet A ID
+    Value: !Ref MP2019SubnetA
+  subnetBid:
+    Description: subnet B ID
+    Value: !Ref MP2019SubnetB

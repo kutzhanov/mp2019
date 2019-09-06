@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  subnetA:
+    Description: "ID of subnet A to place RDS instance in"
+    Type: String
+  subnetB:
+    Description: "ID of subnet B to place RDS instance in"
+    Type: String
+  AdminSGid:
+    Description: "ID of Admin security group"
+    Type: String
+  RDSSGid:
+    Description: "IDs of RDS security group"
+    Type: String
+  DBInstanceClass:
+    Description: "RDS instance class (a list of allowed values must be pre-defined)"
+    Type: String
+    Default: db.t2.micro
+    AllowedValues:
+      - db.t2.micro
+      - db.m1.small
+      - db.m1.large
+  SlowQueryLog:
+    Description: "MySQL slow_query_log setting (allowed values: 0 or 1)"
+    Type: Number
+    AllowedValues:
+      - 0
+      - 1
+  DBUsername:
+    Description: "database username"
+    Type: String
+    MinLength: 4
+    MaxLength: 15
+    AllowedPattern: ^[a-zA-Z0-9]*$
+  DBPassword:
+    NoEcho: true
+    Description: "database password (this value must not be visible when entered during stack creation)"
+    Type: String
+    MinLength: 5
+    MaxLength: 10
+    AllowedPattern: ^[a-zA-Z0-9]*$
+Resources:
+  myDBSubnetGroup:
+    Type: "AWS::RDS::DBSubnetGroup"
+    Properties:
+      DBSubnetGroupDescription: DB subnet group that includes subnets created in a previous task
+      SubnetIds:
+        - !Ref subnetA
+        - !Ref subnetB
+  RDSDBParameterGroup:
+    Type: "AWS::RDS::DBParameterGroup"
+    Properties:
+      Description: "DB parameter group of MySQL5.7 family with slow_query_log set according to template parameter value"
+      Family: mysql5.7
+      Parameters:
+        slow_query_log: !Ref SlowQueryLog
+# RDS instance using the created subnet / parameter groups, with 8 GB of General Purpose SSD storage,
+# and having "Admin" and "RDS" security groups attached. "Multi-AZ" option should NOT be enabled.
+  RDSInstance:
+    Type: "AWS::RDS::DBInstance"
+    DeletionPolicy: Snapshot
+    Properties:
+      DBSubnetGroupName: !Ref myDBSubnetGroup
+      DBParameterGroupName: !Ref RDSDBParameterGroup
+      AllocatedStorage: "8"
+      VPCSecurityGroups: [ !Ref AdminSGid, !Ref RDSSGid ]
+      StorageType: "gp2"
+      DBInstanceClass: !Ref DBInstanceClass
+      DBName: "mp2019db"
+      DBInstanceIdentifier: "mp2019db"
+      Engine: MySQL
+      EngineVersion: "5.7.22"
+      MasterUserPassword: !Ref DBPassword
+      MasterUsername: !Ref DBUsername
+      MultiAZ: false
+Outputs:
+  RDSendpoint:
+    Description: RDS endpoint address
+    Value: !GetAtt RDSInstance.Endpoint.Address

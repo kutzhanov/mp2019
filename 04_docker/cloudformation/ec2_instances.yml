@@ -1,0 +1,161 @@
+Parameters:
+  subnetA:
+    Description: "ID of subnet A"
+    Type: String
+  subnetB:
+    Description: "ID of subnet B"
+    Type: String
+  AnsibleSGid:
+    Description: "security group ID for Ansible"
+    Type: String
+  WebSGid:
+    Description: "security group ID for Web"
+    Type: String
+  DbSGid:
+    Description: "security group ID for Db"
+    Type: String
+  ec2InstanceClass:
+    Description: "EC2 instance class (a list of allowed values must be pre-defined, t2.micro being the default);"
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+  keyPair:
+    Description: "EC2 key pair name"
+    Type: String
+
+Mappings:
+  RegionMap:
+    us-east-1:
+      AMI: ami-0b898040803850657
+    us-west-1:
+      AMI: ami-056ee704806822732
+    eu-west-1:
+      AMI: ami-0bbc25e23a7640b9b
+    ap-southeast-1:
+      AMI: ami-01f7527546b557442
+    ap-southeast-2:
+      AMI: ami-0dc96254d5535925f
+
+Resources:
+  AnsibleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      RoleName: AnsibleRole
+
+  AnsibleRolePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: AnsibleRolePolicy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: "*"
+            Resource: "*"
+      Roles: [!Ref AnsibleRole]
+
+  AnsibleInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles: [!Ref AnsibleRole]
+
+  AnsibleInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId:
+        Fn::FindInMap:
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      KeyName: !Ref keyPair #"mp2019-keypair"
+      SecurityGroupIds: [!Ref AnsibleSGid]
+      InstanceType: !Ref ec2InstanceClass
+      SubnetId: !Ref subnetA
+      # The instance "ansible" should be attached to instance profile to authenticate dynamic inventory script.
+      IamInstanceProfile: !Ref AnsibleInstanceProfile
+      # install python, git, ansible, pip and boto packages
+      # clone ansible roles, playbook, dynamic inventory files and ssh keys from the git repository
+      UserData:
+        'Fn::Base64': !Sub |
+          #!/usr/bin/bash
+          echo \"---------START----------\"
+          yum update -y
+          su ec2-user
+          cd /home/ec2-user
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          sudo python get-pip.py
+          sudo pip install boto
+          sudo amazon-linux-extras install ansible2
+          curl https://kutzhanov-backup.s3.amazonaws.com/ansible/ansible.cfg -o ansible.cfg
+          sudo cp ansible.cfg /etc/ansible/ansible.cfg
+          sudo yum -y install git
+          sudo amazon-linux-extras install redis4.0
+          sudo pip install redis==2.10.6
+          sudo service redis start
+          sudo systemctl enable redis
+
+          mkdir ansible
+          cd ansible
+          git clone https://github.com/kutzhanov/mp2019.git
+          chown -R ec2-user:ec2-user /home/ec2-user/ansible
+
+          cp /home/ec2-user/ansible/mp2019/03_ansible/kutzhanov_rsa.pub /home/ec2-user/.ssh/id_rsa.pub
+          cp /home/ec2-user/ansible/mp2019/03_ansible/kutzhanov_rsa /home/ec2-user/.ssh/id_rsa
+          cat /home/ec2-user/ansible/mp2019/03_ansible/kutzhanov_rsa.pub >> /home/ec2-user/.ssh/authorized_keys
+
+          echo \"---------FINISH----------\"
+      Tags:
+        - Key: Name
+          Value: Ansible
+
+  DBInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId:
+        Fn::FindInMap:
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      KeyName: !Ref keyPair #"mp2019-keypair"
+      SecurityGroupIds : [!Ref DbSGid]
+      InstanceType: !Ref ec2InstanceClass
+      SubnetId: !Ref subnetA
+      # apply public ssh key for ansible connection
+      UserData:
+        'Fn::Base64': !Sub |
+          #!/usr/bin/bash
+          echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> /home/ec2-user/.ssh/authorized_keys
+      Tags:
+        - Key: Name
+          Value: Db
+
+  WebInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId:
+        Fn::FindInMap:
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      KeyName: !Ref keyPair #"mp2019-keypair"
+      SecurityGroupIds : [!Ref WebSGid]
+      InstanceType: !Ref ec2InstanceClass
+      SubnetId: !Ref subnetA
+      # apply public ssh key for ansible connection
+      UserData:
+        'Fn::Base64': !Sub |
+          #!/usr/bin/bash
+          echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCseinvYfEQf9VBgblkkIKo3+dq/jIlCbgSoWR8j2X7vYVEqgUBhZ6w34CsNbO3rjnTARym5GXsncQ12PUkvaNmy1fNpDaTPCweDq6eHSE8R0n7wRj12E21DZF7TWmWYkaujLKtcvZvrDXM/TQI6eWjE0j6DmFcKisV4gTyVgKzVHUquCb1NtM4I+7Wq0fTcpVhWOtyZu8Dt7i/gG4Jr4rrBWtKmIUDHzFU36ZudCSob95nbBOQTNteNxWPO3tdeK7u/n1trcD/V5oUqaz6aeNsTE6vtoxrQpT9b7uG2UKD8FvpnEJ128zmVd5Ti3ezJ8fxbQaWEgCAPGBue63FLN0D kutzhanov@Timurs-MacBook-Air.local" >> /home/ec2-user/.ssh/authorized_keys
+      Tags:
+        - Key: Name
+          Value: Web
