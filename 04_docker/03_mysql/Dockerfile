@@ -10,7 +10,7 @@
 FROM amazonlinux:latest
 LABEL maintainer="Timur_Kutzhanov@epam.com"
 
-RUN wget https://repo.mysql.com/mysql80-community-release-el7-1.noarch.rpm
+RUN curl https://repo.mysql.com/mysql80-community-release-el7-1.noarch.rpm -o mysql80-community-release-el7-1.noarch.rpm
 RUN yum localinstall mysql80-community-release-el7-1.noarch.rpm
 RUN yum install mysql-community-server
 
