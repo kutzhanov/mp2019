@@ -15,9 +15,8 @@ LABEL maintainer="Timur_Kutzhanov@epam.com"
 RUN yum -y install httpd
 RUN yum update -y && yum install -y \
 httpd \
-php70 \
-php70-mysqlnd \
-mysql57-server \
+php \
+php-mysql \
 && yum clean all
 
 WORKDIR /var/www/mp2019/
