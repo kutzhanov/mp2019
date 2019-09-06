@@ -96,7 +96,7 @@ Upload nested templates into 'cf_templates' directory of 'mp2019-docker' s3 buck
 
 https://mp2019-docker-kutzhanov.s3.amazonaws.com/cf_templates/docker-nodes.yml
 
-aws cloudformation create-stack --stack-name main --template-body file://main.yml --parameters ParameterKey=keyPair,ParameterValue=mp2019-keypair ParameterKey=S3BucketName,ParameterValue=mp2019-docker-kutzhanov
+aws cloudformation create-stack --stack-name main --template-body file://main.yml --parameters ParameterKey=keyPair,ParameterValue=mp2019-keypair ParameterKey=S3BucketName,ParameterValue=mp2019-docker-kutzhanov --capabilities CAPABILITY_NAMED_IAM
 
 Circular dependency between resources: [DockerSG]
 
@@ -109,16 +109,14 @@ Has prohibited field Resource (Service: AmazonIdentityManagement; Status Code: 4
 Task 3
 
 Create Apache Load Balancer configuration which will balance traffic between 'web' service containers by Round Robin method.
+
 Create Dockerfile to setup Apache Load Balancer with the following features:
-
-
-source image is latest amazonlinux;
-image maintainer is defined;
-install Apache web server;
-copy Load Balancer configuration;
-port 80 exposed;
-ensure that Apache service is up and running;
-
+	source image is latest amazonlinux;
+	image maintainer is defined;
+	install Apache web server;
+	copy Load Balancer configuration;
+	port 80 exposed;
+	ensure that Apache service is up and running;
 
 Build image for Load Balancer and push to Docker Hub
 
