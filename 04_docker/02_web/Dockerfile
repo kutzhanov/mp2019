@@ -12,7 +12,6 @@
 FROM amazonlinux:latest
 LABEL maintainer="Timur_Kutzhanov@epam.com"
 
-RUN yum -y install httpd
 RUN yum update -y && yum install -y \
 httpd \
 php \
@@ -22,6 +21,7 @@ php-mysql \
 WORKDIR /var/www/mp2019/
 
 COPY index.php /var/www/mp2019/
+RUN chmod 644 /var/www/mp2019/index.php
 
 COPY httpd.conf /etc/httpd/conf.d/
 
