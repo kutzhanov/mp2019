@@ -15,7 +15,7 @@ LABEL maintainer="Timur_Kutzhanov@epam.com"
 RUN yum update -y && yum install -y \
 httpd \
 php \
-php-mysql \
+php-mysqlnd \
 && yum clean all
 
 WORKDIR /var/www/mp2019/
@@ -23,7 +23,7 @@ WORKDIR /var/www/mp2019/
 COPY index.php /var/www/mp2019/
 RUN chmod 644 /var/www/mp2019/index.php
 
-COPY httpd.conf /etc/httpd/conf.d/
+COPY httpd.conf /etc/httpd/conf/
 
 EXPOSE 8080
 
