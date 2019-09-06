@@ -142,6 +142,9 @@ ensure that Apache service is up and running;
 
 Build image for Web Server and push to Docker Hub
 
+docker image build -t mywebimage .
+docker container run --name myweb -p 8080:8080 -it --rm mywebimage /bin/bash
+docker container run --name myweb -p 8080:8080 -d --rm mywebimage
 
 Task 5
 
