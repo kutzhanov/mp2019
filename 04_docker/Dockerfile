@@ -14,7 +14,6 @@ LABEL maintainer="Timur_Kutzhanov@epam.com"
 
 RUN yum -y install httpd
 
-#COPY mod_proxy.conf /etc/httpd/conf.modules.d/
 COPY mod_proxy.conf /etc/httpd/conf.d/
 
 EXPOSE 80
