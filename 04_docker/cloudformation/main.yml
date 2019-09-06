@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Parameters:
   cidrBlock:
     Description: "CIDR block for VPC."
@@ -52,3 +53,87 @@ Resources:
         ec2InstanceClass: !Ref ec2InstanceClass
         keyPair: !Ref keyPair
       TemplateURL: https://kutzhanov-backup.s3.amazonaws.com/ansible/ec2_instances.yml
+=======
+Parameters:
+  cidrBlock:
+    Description: "CIDR block for VPC."
+    Type: String
+    Default: 192.168.0.0/16
+  cidrBlockSubnetA:
+    Description: "CIDR block for Subnet A."
+    Type: String
+    Default: 192.168.1.0/24
+  cidrBlockSubnetB:
+    Description: "CIDR block for Subnet B."
+    Type: String
+    Default: 192.168.2.0/24
+  ec2InstanceClass:
+    Description: "EC2 instance class (a list of allowed values must be pre-defined, t2.micro being the default);"
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+  minInstance:
+    Description: "minimum ASG instance count (a default value must be pre-defined)"
+    Type: Number
+    Default: 3
+  maxInstance:
+    Description: "maximum ASG instance count (a default value must be pre-defined)"
+    Type: Number
+    Default: 3
+  keyPair:
+    Description: "EC2 key pair name"
+    Type: String
+  S3BucketName:
+    Description: "S3 bucket name"
+    Type: String
+
+Resources:
+  NetworkingStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        cidrBlock: !Ref cidrBlock
+        cidrBlockSubnetA: !Ref cidrBlockSubnetA
+        cidrBlockSubnetB: !Ref cidrBlockSubnetB
+      TemplateURL:
+        !Join
+          - ''
+          - - 'https://'
+            - !Ref S3BucketName
+            - '.s3.amazonaws.com/cf_templates/networking.yml'
+
+  SecurityGroupsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        VPCid: !GetAtt NetworkingStack.Outputs.VPCid
+      TemplateURL:
+        !Join
+          - ''
+          - - 'https://'
+            - !Ref S3BucketName
+            - '.s3.amazonaws.com/cf_templates/security_groups.yml'
+
+  DockerStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        subnetA: !GetAtt NetworkingStack.Outputs.subnetAid
+        subnetB: !GetAtt NetworkingStack.Outputs.subnetBid
+        S3BucketName: !Ref S3BucketName
+        AdminSGid: !GetAtt SecurityGroupsStack.Outputs.AdminSGid
+        DockerSGid: !GetAtt SecurityGroupsStack.Outputs.DockerSGid
+        ec2InstanceClass: !Ref ec2InstanceClass
+        minInstance: !Ref minInstance
+        maxInstance: !Ref maxInstance
+        keyPair: !Ref keyPair
+      TemplateURL:
+        !Join
+          - ''
+          - - 'https://'
+            - !Ref S3BucketName
+            - '.s3.amazonaws.com/cf_templates/docker-nodes.yml'
+>>>>>>> 5f8eced9bfca582c22c19d491941c654dff53dc0

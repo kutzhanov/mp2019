@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Parameters:
   VPCid:
     Description: "VPC ID"
@@ -75,3 +76,93 @@ Outputs:
   DbSGid:
     Description: Db SecurityGroup ID
     Value: !GetAtt DbSG.GroupId
+=======
+Parameters:
+  VPCid:
+    Description: "VPC ID"
+    Type: String
+
+Resources:
+  AdminSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allow all incoming connections from your IP address and the IP address of Karaganda EPAM office
+      GroupName: Admin
+      VpcId: !Ref VPCid
+      SecurityGroupIngress:
+        - CidrIp: 217.196.26.66/32 # Astana office
+          IpProtocol: "-1"
+        - CidrIp: 147.30.49.117/32 # home
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: CF_AdminSG
+
+  DockerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allowing incoming connection on TCP port 2377, TCP and UDP port 7946, UDP port 4789 and TCP port 3306 from itself
+      GroupName: Docker
+      VpcId: !Ref VPCid
+      Tags:
+        - Key: Name
+          Value: CF_DockerSG
+
+  SGIngress1:
+     Type: 'AWS::EC2::SecurityGroupIngress'
+     Properties:
+        GroupId: !GetAtt DockerSG.GroupId
+        Description: "allowing incoming connection on TCP port 2377"
+        IpProtocol: tcp
+        FromPort: 2377
+        ToPort: 2377
+        SourceSecurityGroupId: !GetAtt DockerSG.GroupId
+
+  SGIngress2:
+     Type: 'AWS::EC2::SecurityGroupIngress'
+     Properties:
+        GroupId: !GetAtt DockerSG.GroupId
+        Description: "TCP port 7946"
+        IpProtocol: tcp
+        FromPort: 7946
+        ToPort: 7946
+        SourceSecurityGroupId: !GetAtt DockerSG.GroupId
+
+  SGIngress3:
+     Type: 'AWS::EC2::SecurityGroupIngress'
+     Properties:
+        GroupId: !GetAtt DockerSG.GroupId
+        Description: "UDP port 7946"
+        IpProtocol: udp
+        FromPort: 7946
+        ToPort: 7946
+        SourceSecurityGroupId: !GetAtt DockerSG.GroupId
+
+  SGIngress4:
+     Type: 'AWS::EC2::SecurityGroupIngress'
+     Properties:
+        GroupId: !GetAtt DockerSG.GroupId
+        Description: "UDP port 4789"
+        IpProtocol: udp
+        FromPort: 4789
+        ToPort: 4789
+        SourceSecurityGroupId: !GetAtt DockerSG.GroupId
+
+  SGIngress5:
+     Type: 'AWS::EC2::SecurityGroupIngress'
+     Properties:
+        GroupId: !GetAtt DockerSG.GroupId
+        Description: "TCP port 3306"
+        IpProtocol: tcp
+        FromPort: 3306
+        ToPort: 3306
+        SourceSecurityGroupId: !GetAtt DockerSG.GroupId
+
+Outputs:
+  AdminSGid:
+    Description: Admin SecurityGroup ID
+    Value: !GetAtt AdminSG.GroupId
+  DockerSGid:
+    Description: Docker SecurityGroup ID
+    Value: !GetAtt DockerSG.GroupId
+>>>>>>> 5f8eced9bfca582c22c19d491941c654dff53dc0
