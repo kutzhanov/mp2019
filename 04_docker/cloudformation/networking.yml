@@ -11,11 +11,7 @@ Parameters:
     Description: "CIDR block for Subnet B."
     Type: String
     Default: 192.168.2.0/24
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 5f8eced9bfca582c22c19d491941c654dff53dc0
 Resources:
   # VPC (with "EnableDnsSupport" and "EnableDnsHostnames" options enabled)
   Mp2019VPC:
@@ -28,10 +24,7 @@ Resources:
       Tags:
         - Key: Name
           Value: Mp2019VPC
-<<<<<<< HEAD
 
-=======
->>>>>>> 5f8eced9bfca582c22c19d491941c654dff53dc0
   # non-default route table
   MP2019RT:
     Type: AWS::EC2::RouteTable
@@ -41,10 +34,7 @@ Resources:
       Tags:
       - Key: Name
         Value: MP2019RT
-<<<<<<< HEAD
 
-=======
->>>>>>> 5f8eced9bfca582c22c19d491941c654dff53dc0
   # two subnets in different availability zones associated with the route table (with "MapPublicIpOnLaunch" option enabled);
   MP2019SubnetA:
     Type: AWS::EC2::Subnet
@@ -66,10 +56,7 @@ Resources:
         Ref: MP2019SubnetA
       RouteTableId:
         Ref: MP2019RT
-<<<<<<< HEAD
 
-=======
->>>>>>> 5f8eced9bfca582c22c19d491941c654dff53dc0
   # two subnets in different availability zones associated with the route table (with "MapPublicIpOnLaunch" option enabled);
   MP2019SubnetB:
     Type: AWS::EC2::Subnet
@@ -91,10 +78,7 @@ Resources:
         Ref: MP2019SubnetB
       RouteTableId:
         Ref: MP2019RT
-<<<<<<< HEAD
 
-=======
->>>>>>> 5f8eced9bfca582c22c19d491941c654dff53dc0
   # Internet gateway attached to the VPC
   MP2019InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -110,10 +94,7 @@ Resources:
         Ref: Mp2019VPC
       InternetGatewayId:
         Ref: MP2019InternetGateway
-<<<<<<< HEAD
 
-=======
->>>>>>> 5f8eced9bfca582c22c19d491941c654dff53dc0
   # default route in the route table pointing to the Internet gateway.
   MP2019Route:
     Type: AWS::EC2::Route
@@ -124,11 +105,7 @@ Resources:
        DestinationCidrBlock: 0.0.0.0/0
        GatewayId:
          Ref: MP2019InternetGateway
-<<<<<<< HEAD
 
-         
-=======
->>>>>>> 5f8eced9bfca582c22c19d491941c654dff53dc0
 Outputs:
   VPCid:
     Description: VPC ID
