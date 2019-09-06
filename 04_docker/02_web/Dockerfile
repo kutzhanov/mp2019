@@ -24,7 +24,7 @@ WORKDIR /var/www/mp2019/
 
 COPY index.php /var/www/mp2019/
 
-COPY mod_proxy.conf /etc/httpd/conf.d/
+COPY httpd.conf /etc/httpd/conf.d/
 
 EXPOSE 8080
 
