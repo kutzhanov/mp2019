@@ -120,6 +120,9 @@ Create Dockerfile to setup Apache Load Balancer with the following features:
 
 Build image for Load Balancer and push to Docker Hub
 
+docker image build -t myapachelb .
+docker container run -p 80:80 --name myapache --rm -it myapachelb bash
+$docker container run -p 80:80 --name myapache --rm -d myapachelb
 
 Task 4
 
