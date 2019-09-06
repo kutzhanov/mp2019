@@ -162,6 +162,9 @@ ensure that MySQL service is up and running;
 Build image for Database Server and push to Docker Hub
 
 
+docker image build -t mysqlimage .
+docker container run --name mysql -p 8080:8080 -it --rm mysqlimage /bin/bash
+
 Task 6
 
 Create Docker Compose file which deploy a list of resources:

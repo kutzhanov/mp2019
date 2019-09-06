@@ -1,0 +1,560 @@
+docker image build -t mysqlimage .
+Sending build context to Docker daemon  9.728kB
+Step 1/11 : FROM amazonlinux:latest
+ ---> dc34c260f454
+Step 2/11 : LABEL maintainer="Timur_Kutzhanov@epam.com"
+ ---> Using cache
+ ---> 6b3cfce9fb64
+Step 3/11 : RUN curl https://repo.mysql.com/mysql80-community-release-el7-1.noarch.rpm -o mysql80-community-release-el7-1.noarch.rpm
+ ---> Using cache
+ ---> 48deb32419cf
+Step 4/11 : RUN yum localinstall mysql80-community-release-el7-1.noarch.rpm -y
+ ---> Running in 365a4e42a906
+Loaded plugins: ovl, priorities
+Examining mysql80-community-release-el7-1.noarch.rpm: mysql80-community-release-el7-1.noarch
+Marking mysql80-community-release-el7-1.noarch.rpm to be installed
+Resolving Dependencies
+--> Running transaction check
+---> Package mysql80-community-release.noarch 0:el7-1 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package             Arch   Version
+                                  Repository                               Size
+================================================================================
+Installing:
+ mysql80-community-release
+                     noarch el7-1 /mysql80-community-release-el7-1.noarch  31 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total size: 31 k
+Installed size: 31 k
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : mysql80-community-release-el7-1.noarch                       1/1
+  Verifying  : mysql80-community-release-el7-1.noarch                       1/1
+
+Installed:
+  mysql80-community-release.noarch 0:el7-1
+
+Complete!
+Removing intermediate container 365a4e42a906
+ ---> f4e421bab590
+Step 5/11 : RUN yum install mysql-community-server -y
+ ---> Running in 8e508c875222
+Loaded plugins: ovl, priorities
+26 packages excluded due to repository priority protections
+Resolving Dependencies
+--> Running transaction check
+---> Package mysql-community-server.x86_64 0:8.0.17-1.el7 will be installed
+--> Processing Dependency: mysql-community-common(x86-64) = 8.0.17-1.el7 for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: mysql-community-client(x86-64) >= 8.0.11 for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: systemd for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: systemd for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: shadow-utils for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: procps for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: perl(strict) for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: perl(Getopt::Long) for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: net-tools for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: libnuma.so.1(libnuma_1.2)(64bit) for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: libnuma.so.1(libnuma_1.1)(64bit) for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: libaio.so.1(LIBAIO_0.4)(64bit) for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: libaio.so.1(LIBAIO_0.1)(64bit) for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: /usr/bin/perl for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: libnuma.so.1()(64bit) for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Processing Dependency: libaio.so.1()(64bit) for package: mysql-community-server-8.0.17-1.el7.x86_64
+--> Running transaction check
+---> Package libaio.x86_64 0:0.3.109-13.amzn2.0.2 will be installed
+---> Package mysql-community-client.x86_64 0:8.0.17-1.el7 will be installed
+--> Processing Dependency: mysql-community-libs(x86-64) >= 8.0.11 for package: mysql-community-client-8.0.17-1.el7.x86_64
+--> Processing Dependency: libtinfo.so.5()(64bit) for package: mysql-community-client-8.0.17-1.el7.x86_64
+--> Processing Dependency: libncurses.so.5()(64bit) for package: mysql-community-client-8.0.17-1.el7.x86_64
+---> Package mysql-community-common.x86_64 0:8.0.17-1.el7 will be installed
+---> Package net-tools.x86_64 0:2.0-0.22.20131004git.amzn2.0.2 will be installed
+---> Package numactl-libs.x86_64 0:2.0.9-7.amzn2 will be installed
+---> Package perl.x86_64 4:5.16.3-294.amzn2 will be installed
+--> Processing Dependency: perl-libs = 4:5.16.3-294.amzn2 for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Socket) >= 1.3 for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Scalar::Util) >= 1.10 for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl-macros for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl-libs for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(threads::shared) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(threads) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(constant) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Time::Local) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Time::HiRes) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Storable) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Socket) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Scalar::Util) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Pod::Simple::XHTML) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Pod::Simple::Search) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Filter::Util::Call) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(File::Temp) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(File::Spec::Unix) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(File::Spec::Functions) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(File::Spec) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(File::Path) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Exporter) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Cwd) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: perl(Carp) for package: 4:perl-5.16.3-294.amzn2.x86_64
+--> Processing Dependency: libperl.so()(64bit) for package: 4:perl-5.16.3-294.amzn2.x86_64
+---> Package perl-Getopt-Long.noarch 0:2.40-3.amzn2 will be installed
+--> Processing Dependency: perl(Pod::Usage) >= 1.14 for package: perl-Getopt-Long-2.40-3.amzn2.noarch
+--> Processing Dependency: perl(Text::ParseWords) for package: perl-Getopt-Long-2.40-3.amzn2.noarch
+---> Package procps-ng.x86_64 0:3.3.10-17.amzn2.2.2 will be installed
+--> Processing Dependency: libsystemd.so.0(LIBSYSTEMD_209)(64bit) for package: procps-ng-3.3.10-17.amzn2.2.2.x86_64
+--> Processing Dependency: libsystemd.so.0()(64bit) for package: procps-ng-3.3.10-17.amzn2.2.2.x86_64
+---> Package shadow-utils.x86_64 2:4.1.5.1-24.amzn2.0.2 will be installed
+--> Processing Dependency: audit-libs >= 1.6.5 for package: 2:shadow-utils-4.1.5.1-24.amzn2.0.2.x86_64
+--> Processing Dependency: libsemanage.so.1(LIBSEMANAGE_1.0)(64bit) for package: 2:shadow-utils-4.1.5.1-24.amzn2.0.2.x86_64
+--> Processing Dependency: libsemanage.so.1()(64bit) for package: 2:shadow-utils-4.1.5.1-24.amzn2.0.2.x86_64
+--> Processing Dependency: libaudit.so.1()(64bit) for package: 2:shadow-utils-4.1.5.1-24.amzn2.0.2.x86_64
+---> Package systemd.x86_64 0:219-57.amzn2.0.9 will be installed
+--> Processing Dependency: kmod >= 18-4 for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libpam.so.0(LIBPAM_1.0)(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libkmod.so.2(LIBKMOD_5)(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libdw.so.1(ELFUTILS_0.158)(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libdw.so.1(ELFUTILS_0.130)(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libdw.so.1(ELFUTILS_0.122)(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libcryptsetup.so.4(CRYPTSETUP_1.0)(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: dbus for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: acl for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libqrencode.so.3()(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libpam.so.0()(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: liblz4.so.1()(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libkmod.so.2()(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libdw.so.1()(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Processing Dependency: libcryptsetup.so.4()(64bit) for package: systemd-219-57.amzn2.0.9.x86_64
+--> Running transaction check
+---> Package acl.x86_64 0:2.2.51-14.amzn2 will be installed
+---> Package audit-libs.x86_64 0:2.8.1-3.amzn2.1 will be installed
+--> Processing Dependency: libcap-ng.so.0()(64bit) for package: audit-libs-2.8.1-3.amzn2.1.x86_64
+---> Package cryptsetup-libs.x86_64 0:1.7.4-4.amzn2 will be installed
+--> Processing Dependency: libdevmapper.so.1.02(DM_1_02_97)(64bit) for package: cryptsetup-libs-1.7.4-4.amzn2.x86_64
+--> Processing Dependency: libdevmapper.so.1.02(Base)(64bit) for package: cryptsetup-libs-1.7.4-4.amzn2.x86_64
+--> Processing Dependency: libdevmapper.so.1.02()(64bit) for package: cryptsetup-libs-1.7.4-4.amzn2.x86_64
+---> Package dbus.x86_64 1:1.10.24-7.amzn2 will be installed
+--> Processing Dependency: dbus-libs(x86-64) = 1:1.10.24-7.amzn2 for package: 1:dbus-1.10.24-7.amzn2.x86_64
+--> Processing Dependency: libdbus-1.so.3(LIBDBUS_PRIVATE_1.10.24)(64bit) for package: 1:dbus-1.10.24-7.amzn2.x86_64
+--> Processing Dependency: libdbus-1.so.3(LIBDBUS_1_3)(64bit) for package: 1:dbus-1.10.24-7.amzn2.x86_64
+--> Processing Dependency: libdbus-1.so.3()(64bit) for package: 1:dbus-1.10.24-7.amzn2.x86_64
+---> Package elfutils-libs.x86_64 0:0.170-4.amzn2 will be installed
+--> Processing Dependency: default-yama-scope for package: elfutils-libs-0.170-4.amzn2.x86_64
+---> Package kmod.x86_64 0:25-3.amzn2.0.2 will be installed
+---> Package kmod-libs.x86_64 0:25-3.amzn2.0.2 will be installed
+---> Package libsemanage.x86_64 0:2.5-11.amzn2 will be installed
+--> Processing Dependency: libustr-1.0.so.1(USTR_1.0.1)(64bit) for package: libsemanage-2.5-11.amzn2.x86_64
+--> Processing Dependency: libustr-1.0.so.1(USTR_1.0)(64bit) for package: libsemanage-2.5-11.amzn2.x86_64
+--> Processing Dependency: libustr-1.0.so.1()(64bit) for package: libsemanage-2.5-11.amzn2.x86_64
+---> Package lz4.x86_64 0:1.7.5-2.amzn2.0.1 will be installed
+---> Package mysql-community-libs.x86_64 0:8.0.17-1.el7 will be installed
+---> Package ncurses-compat-libs.x86_64 0:6.0-8.20170212.amzn2.1.2 will be installed
+---> Package pam.x86_64 0:1.1.8-22.amzn2 will be installed
+--> Processing Dependency: libpwquality >= 0.9.9 for package: pam-1.1.8-22.amzn2.x86_64
+--> Processing Dependency: cracklib-dicts >= 2.8 for package: pam-1.1.8-22.amzn2.x86_64
+--> Processing Dependency: libcrack.so.2()(64bit) for package: pam-1.1.8-22.amzn2.x86_64
+---> Package perl-Carp.noarch 0:1.26-244.amzn2 will be installed
+---> Package perl-Exporter.noarch 0:5.68-3.amzn2 will be installed
+---> Package perl-File-Path.noarch 0:2.09-2.amzn2 will be installed
+---> Package perl-File-Temp.noarch 0:0.23.01-3.amzn2 will be installed
+---> Package perl-Filter.x86_64 0:1.49-3.amzn2.0.2 will be installed
+---> Package perl-PathTools.x86_64 0:3.40-5.amzn2.0.2 will be installed
+---> Package perl-Pod-Simple.noarch 1:3.28-4.amzn2 will be installed
+--> Processing Dependency: perl(Pod::Escapes) >= 1.04 for package: 1:perl-Pod-Simple-3.28-4.amzn2.noarch
+--> Processing Dependency: perl(Encode) for package: 1:perl-Pod-Simple-3.28-4.amzn2.noarch
+---> Package perl-Pod-Usage.noarch 0:1.63-3.amzn2 will be installed
+--> Processing Dependency: perl(Pod::Text) >= 3.15 for package: perl-Pod-Usage-1.63-3.amzn2.noarch
+--> Processing Dependency: perl-Pod-Perldoc for package: perl-Pod-Usage-1.63-3.amzn2.noarch
+---> Package perl-Scalar-List-Utils.x86_64 0:1.27-248.amzn2.0.2 will be installed
+---> Package perl-Socket.x86_64 0:2.010-4.amzn2.0.2 will be installed
+---> Package perl-Storable.x86_64 0:2.45-3.amzn2.0.2 will be installed
+---> Package perl-Text-ParseWords.noarch 0:3.29-4.amzn2 will be installed
+---> Package perl-Time-HiRes.x86_64 4:1.9725-3.amzn2.0.2 will be installed
+---> Package perl-Time-Local.noarch 0:1.2300-2.amzn2 will be installed
+---> Package perl-constant.noarch 0:1.27-2.amzn2.0.1 will be installed
+---> Package perl-libs.x86_64 4:5.16.3-294.amzn2 will be installed
+---> Package perl-macros.x86_64 4:5.16.3-294.amzn2 will be installed
+---> Package perl-threads.x86_64 0:1.87-4.amzn2.0.2 will be installed
+---> Package perl-threads-shared.x86_64 0:1.43-6.amzn2.0.2 will be installed
+---> Package qrencode-libs.x86_64 0:3.4.1-3.amzn2.0.2 will be installed
+---> Package systemd-libs.x86_64 0:219-57.amzn2.0.9 will be installed
+--> Running transaction check
+---> Package cracklib.x86_64 0:2.9.0-11.amzn2.0.2 will be installed
+--> Processing Dependency: gzip for package: cracklib-2.9.0-11.amzn2.0.2.x86_64
+---> Package cracklib-dicts.x86_64 0:2.9.0-11.amzn2.0.2 will be installed
+---> Package dbus-libs.x86_64 1:1.10.24-7.amzn2 will be installed
+---> Package device-mapper-libs.x86_64 7:1.02.146-4.amzn2.0.2 will be installed
+--> Processing Dependency: device-mapper = 7:1.02.146-4.amzn2.0.2 for package: 7:device-mapper-libs-1.02.146-4.amzn2.0.2.x86_64
+---> Package elfutils-default-yama-scope.noarch 0:0.170-4.amzn2 will be installed
+---> Package libcap-ng.x86_64 0:0.7.5-4.amzn2.0.4 will be installed
+---> Package libpwquality.x86_64 0:1.2.3-5.amzn2 will be installed
+---> Package perl-Encode.x86_64 0:2.51-7.amzn2.0.2 will be installed
+---> Package perl-Pod-Escapes.noarch 1:1.04-294.amzn2 will be installed
+---> Package perl-Pod-Perldoc.noarch 0:3.20-4.amzn2 will be installed
+--> Processing Dependency: perl(parent) for package: perl-Pod-Perldoc-3.20-4.amzn2.noarch
+--> Processing Dependency: perl(HTTP::Tiny) for package: perl-Pod-Perldoc-3.20-4.amzn2.noarch
+--> Processing Dependency: groff-base for package: perl-Pod-Perldoc-3.20-4.amzn2.noarch
+---> Package perl-podlators.noarch 0:2.5.1-3.amzn2.0.1 will be installed
+---> Package ustr.x86_64 0:1.0.4-16.amzn2.0.3 will be installed
+--> Running transaction check
+---> Package device-mapper.x86_64 7:1.02.146-4.amzn2.0.2 will be installed
+--> Processing Dependency: util-linux >= 2.23 for package: 7:device-mapper-1.02.146-4.amzn2.0.2.x86_64
+---> Package groff-base.x86_64 0:1.22.2-8.amzn2.0.2 will be installed
+---> Package gzip.x86_64 0:1.5-10.amzn2 will be installed
+---> Package perl-HTTP-Tiny.noarch 0:0.033-3.amzn2 will be installed
+---> Package perl-parent.noarch 1:0.225-244.amzn2.0.1 will be installed
+--> Running transaction check
+---> Package util-linux.x86_64 0:2.30.2-2.amzn2.0.4 will be installed
+--> Processing Dependency: libsmartcols = 2.30.2-2.amzn2.0.4 for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libfdisk = 2.30.2-2.amzn2.0.4 for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libutempter.so.0(UTEMPTER_1.1)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libsmartcols.so.1(SMARTCOLS_2.30)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libsmartcols.so.1(SMARTCOLS_2.29)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libsmartcols.so.1(SMARTCOLS_2.28)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libsmartcols.so.1(SMARTCOLS_2.27)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libsmartcols.so.1(SMARTCOLS_2.25)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libfdisk.so.1(FDISK_2.30)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libfdisk.so.1(FDISK_2.29)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libfdisk.so.1(FDISK_2.28)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libfdisk.so.1(FDISK_2.27)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libfdisk.so.1(FDISK_2.26)(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libutempter.so.0()(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libsmartcols.so.1()(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Processing Dependency: libfdisk.so.1()(64bit) for package: util-linux-2.30.2-2.amzn2.0.4.x86_64
+--> Running transaction check
+---> Package libfdisk.x86_64 0:2.30.2-2.amzn2.0.4 will be installed
+---> Package libsmartcols.x86_64 0:2.30.2-2.amzn2.0.4 will be installed
+---> Package libutempter.x86_64 0:1.1.6-4.amzn2.0.2 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package                Arch   Version                  Repository         Size
+================================================================================
+Installing:
+ mysql-community-server x86_64 8.0.17-1.el7             mysql80-community 415 M
+Installing for dependencies:
+ acl                    x86_64 2.2.51-14.amzn2          amzn2-core         82 k
+ audit-libs             x86_64 2.8.1-3.amzn2.1          amzn2-core         99 k
+ cracklib               x86_64 2.9.0-11.amzn2.0.2       amzn2-core         80 k
+ cracklib-dicts         x86_64 2.9.0-11.amzn2.0.2       amzn2-core        3.6 M
+ cryptsetup-libs        x86_64 1.7.4-4.amzn2            amzn2-core        224 k
+ dbus                   x86_64 1:1.10.24-7.amzn2        amzn2-core        247 k
+ dbus-libs              x86_64 1:1.10.24-7.amzn2        amzn2-core        169 k
+ device-mapper          x86_64 7:1.02.146-4.amzn2.0.2   amzn2-core        289 k
+ device-mapper-libs     x86_64 7:1.02.146-4.amzn2.0.2   amzn2-core        320 k
+ elfutils-default-yama-scope
+                        noarch 0.170-4.amzn2            amzn2-core         31 k
+ elfutils-libs          x86_64 0.170-4.amzn2            amzn2-core        270 k
+ groff-base             x86_64 1.22.2-8.amzn2.0.2       amzn2-core        948 k
+ gzip                   x86_64 1.5-10.amzn2             amzn2-core        130 k
+ kmod                   x86_64 25-3.amzn2.0.2           amzn2-core        111 k
+ kmod-libs              x86_64 25-3.amzn2.0.2           amzn2-core         59 k
+ libaio                 x86_64 0.3.109-13.amzn2.0.2     amzn2-core         24 k
+ libcap-ng              x86_64 0.7.5-4.amzn2.0.4        amzn2-core         25 k
+ libfdisk               x86_64 2.30.2-2.amzn2.0.4       amzn2-core        240 k
+ libpwquality           x86_64 1.2.3-5.amzn2            amzn2-core         84 k
+ libsemanage            x86_64 2.5-11.amzn2             amzn2-core        152 k
+ libsmartcols           x86_64 2.30.2-2.amzn2.0.4       amzn2-core        156 k
+ libutempter            x86_64 1.1.6-4.amzn2.0.2        amzn2-core         25 k
+ lz4                    x86_64 1.7.5-2.amzn2.0.1        amzn2-core         99 k
+ mysql-community-client x86_64 8.0.17-1.el7             mysql80-community  32 M
+ mysql-community-common x86_64 8.0.17-1.el7             mysql80-community 589 k
+ mysql-community-libs   x86_64 8.0.17-1.el7             mysql80-community 3.0 M
+ ncurses-compat-libs    x86_64 6.0-8.20170212.amzn2.1.2 amzn2-core        314 k
+ net-tools              x86_64 2.0-0.22.20131004git.amzn2.0.2
+                                                        amzn2-core        305 k
+ numactl-libs           x86_64 2.0.9-7.amzn2            amzn2-core         29 k
+ pam                    x86_64 1.1.8-22.amzn2           amzn2-core        718 k
+ perl                   x86_64 4:5.16.3-294.amzn2       amzn2-core        8.0 M
+ perl-Carp              noarch 1.26-244.amzn2           amzn2-core         19 k
+ perl-Encode            x86_64 2.51-7.amzn2.0.2         amzn2-core        1.5 M
+ perl-Exporter          noarch 5.68-3.amzn2             amzn2-core         29 k
+ perl-File-Path         noarch 2.09-2.amzn2             amzn2-core         27 k
+ perl-File-Temp         noarch 0.23.01-3.amzn2          amzn2-core         56 k
+ perl-Filter            x86_64 1.49-3.amzn2.0.2         amzn2-core         76 k
+ perl-Getopt-Long       noarch 2.40-3.amzn2             amzn2-core         56 k
+ perl-HTTP-Tiny         noarch 0.033-3.amzn2            amzn2-core         38 k
+ perl-PathTools         x86_64 3.40-5.amzn2.0.2         amzn2-core         83 k
+ perl-Pod-Escapes       noarch 1:1.04-294.amzn2         amzn2-core         51 k
+ perl-Pod-Perldoc       noarch 3.20-4.amzn2             amzn2-core         87 k
+ perl-Pod-Simple        noarch 1:3.28-4.amzn2           amzn2-core        216 k
+ perl-Pod-Usage         noarch 1.63-3.amzn2             amzn2-core         27 k
+ perl-Scalar-List-Utils x86_64 1.27-248.amzn2.0.2       amzn2-core         36 k
+ perl-Socket            x86_64 2.010-4.amzn2.0.2        amzn2-core         49 k
+ perl-Storable          x86_64 2.45-3.amzn2.0.2         amzn2-core         78 k
+ perl-Text-ParseWords   noarch 3.29-4.amzn2             amzn2-core         14 k
+ perl-Time-HiRes        x86_64 4:1.9725-3.amzn2.0.2     amzn2-core         45 k
+ perl-Time-Local        noarch 1.2300-2.amzn2           amzn2-core         24 k
+ perl-constant          noarch 1.27-2.amzn2.0.1         amzn2-core         19 k
+ perl-libs              x86_64 4:5.16.3-294.amzn2       amzn2-core        700 k
+ perl-macros            x86_64 4:5.16.3-294.amzn2       amzn2-core         44 k
+ perl-parent            noarch 1:0.225-244.amzn2.0.1    amzn2-core         12 k
+ perl-podlators         noarch 2.5.1-3.amzn2.0.1        amzn2-core        112 k
+ perl-threads           x86_64 1.87-4.amzn2.0.2         amzn2-core         50 k
+ perl-threads-shared    x86_64 1.43-6.amzn2.0.2         amzn2-core         39 k
+ procps-ng              x86_64 3.3.10-17.amzn2.2.2      amzn2-core        291 k
+ qrencode-libs          x86_64 3.4.1-3.amzn2.0.2        amzn2-core         50 k
+ shadow-utils           x86_64 2:4.1.5.1-24.amzn2.0.2   amzn2-core        1.1 M
+ systemd                x86_64 219-57.amzn2.0.9         amzn2-core        5.0 M
+ systemd-libs           x86_64 219-57.amzn2.0.9         amzn2-core        396 k
+ ustr                   x86_64 1.0.4-16.amzn2.0.3       amzn2-core         96 k
+ util-linux             x86_64 2.30.2-2.amzn2.0.4       amzn2-core        2.3 M
+
+Transaction Summary
+================================================================================
+Install  1 Package (+64 Dependent packages)
+
+Total download size: 480 M
+Installed size: 2.1 G
+Downloading packages:
+warning: /var/cache/yum/x86_64/2/mysql80-community/packages/mysql-community-common-8.0.17-1.el7.x86_64.rpm: Header V3 DSA/SHA1 Signature, key ID 5072e1f5: NOKEY
+Public key for mysql-community-common-8.0.17-1.el7.x86_64.rpm is not installed
+--------------------------------------------------------------------------------
+Total                                               24 MB/s | 480 MB  00:19
+Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+Importing GPG key 0x5072E1F5:
+ Userid     : "MySQL Release Engineering <mysql-build@oss.oracle.com>"
+ Fingerprint: a4a9 4068 76fc bd3c 4567 70c8 8c71 8d3b 5072 e1f5
+ Package    : mysql80-community-release-el7-1.noarch (installed)
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : libcap-ng-0.7.5-4.amzn2.0.4.x86_64                          1/65
+  Installing : audit-libs-2.8.1-3.amzn2.1.x86_64                           2/65
+  Installing : mysql-community-common-8.0.17-1.el7.x86_64                  3/65
+  Installing : lz4-1.7.5-2.amzn2.0.1.x86_64                                4/65
+  Installing : mysql-community-libs-8.0.17-1.el7.x86_64                    5/65
+  Installing : groff-base-1.22.2-8.amzn2.0.2.x86_64                        6/65
+  Installing : 1:perl-parent-0.225-244.amzn2.0.1.noarch                    7/65
+  Installing : perl-HTTP-Tiny-0.033-3.amzn2.noarch                         8/65
+  Installing : perl-Pod-Perldoc-3.20-4.amzn2.noarch                        9/65
+  Installing : perl-podlators-2.5.1-3.amzn2.0.1.noarch                    10/65
+  Installing : perl-Encode-2.51-7.amzn2.0.2.x86_64                        11/65
+  Installing : perl-Text-ParseWords-3.29-4.amzn2.noarch                   12/65
+  Installing : perl-Pod-Usage-1.63-3.amzn2.noarch                         13/65
+  Installing : 1:perl-Pod-Escapes-1.04-294.amzn2.noarch                   14/65
+  Installing : 4:perl-macros-5.16.3-294.amzn2.x86_64                      15/65
+  Installing : 4:perl-libs-5.16.3-294.amzn2.x86_64                        16/65
+  Installing : perl-Filter-1.49-3.amzn2.0.2.x86_64                        17/65
+  Installing : perl-Time-Local-1.2300-2.amzn2.noarch                      18/65
+  Installing : perl-constant-1.27-2.amzn2.0.1.noarch                      19/65
+  Installing : perl-Scalar-List-Utils-1.27-248.amzn2.0.2.x86_64           20/65
+  Installing : perl-threads-shared-1.43-6.amzn2.0.2.x86_64                21/65
+  Installing : perl-threads-1.87-4.amzn2.0.2.x86_64                       22/65
+  Installing : perl-PathTools-3.40-5.amzn2.0.2.x86_64                     23/65
+  Installing : 4:perl-Time-HiRes-1.9725-3.amzn2.0.2.x86_64                24/65
+  Installing : perl-Socket-2.010-4.amzn2.0.2.x86_64                       25/65
+  Installing : perl-Carp-1.26-244.amzn2.noarch                            26/65
+  Installing : perl-File-Temp-0.23.01-3.amzn2.noarch                      27/65
+  Installing : perl-File-Path-2.09-2.amzn2.noarch                         28/65
+  Installing : perl-Storable-2.45-3.amzn2.0.2.x86_64                      29/65
+  Installing : perl-Getopt-Long-2.40-3.amzn2.noarch                       30/65
+  Installing : 1:perl-Pod-Simple-3.28-4.amzn2.noarch                      31/65
+  Installing : perl-Exporter-5.68-3.amzn2.noarch                          32/65
+  Installing : 4:perl-5.16.3-294.amzn2.x86_64                             33/65
+  Installing : gzip-1.5-10.amzn2.x86_64                                   34/65
+  Installing : cracklib-2.9.0-11.amzn2.0.2.x86_64                         35/65
+  Installing : cracklib-dicts-2.9.0-11.amzn2.0.2.x86_64                   36/65
+  Installing : pam-1.1.8-22.amzn2.x86_64                                  37/65
+  Installing : libpwquality-1.2.3-5.amzn2.x86_64                          38/65
+  Installing : kmod-25-3.amzn2.0.2.x86_64                                 39/65
+  Installing : ustr-1.0.4-16.amzn2.0.3.x86_64                             40/65
+  Installing : libsemanage-2.5-11.amzn2.x86_64                            41/65
+  Installing : 2:shadow-utils-4.1.5.1-24.amzn2.0.2.x86_64                 42/65
+  Installing : libutempter-1.1.6-4.amzn2.0.2.x86_64                       43/65
+  Installing : libfdisk-2.30.2-2.amzn2.0.4.x86_64                         44/65
+  Installing : libsmartcols-2.30.2-2.amzn2.0.4.x86_64                     45/65
+  Installing : kmod-libs-25-3.amzn2.0.2.x86_64                            46/65
+  Installing : acl-2.2.51-14.amzn2.x86_64                                 47/65
+  Installing : qrencode-libs-3.4.1-3.amzn2.0.2.x86_64                     48/65
+  Installing : util-linux-2.30.2-2.amzn2.0.4.x86_64                       49/65
+  Installing : 7:device-mapper-1.02.146-4.amzn2.0.2.x86_64                50/65
+  Installing : 7:device-mapper-libs-1.02.146-4.amzn2.0.2.x86_64           51/65
+  Installing : cryptsetup-libs-1.7.4-4.amzn2.x86_64                       52/65
+  Installing : elfutils-libs-0.170-4.amzn2.x86_64                         53/65
+  Installing : systemd-libs-219-57.amzn2.0.9.x86_64                       54/65
+  Installing : 1:dbus-libs-1.10.24-7.amzn2.x86_64                         55/65
+  Installing : systemd-219-57.amzn2.0.9.x86_64                            56/65
+  Installing : elfutils-default-yama-scope-0.170-4.amzn2.noarch           57/65
+  Installing : 1:dbus-1.10.24-7.amzn2.x86_64                              58/65
+  Installing : net-tools-2.0-0.22.20131004git.amzn2.0.2.x86_64            59/65
+  Installing : procps-ng-3.3.10-17.amzn2.2.2.x86_64                       60/65
+  Installing : ncurses-compat-libs-6.0-8.20170212.amzn2.1.2.x86_64        61/65
+  Installing : mysql-community-client-8.0.17-1.el7.x86_64                 62/65
+  Installing : numactl-libs-2.0.9-7.amzn2.x86_64                          63/65
+  Installing : libaio-0.3.109-13.amzn2.0.2.x86_64                         64/65
+  Installing : mysql-community-server-8.0.17-1.el7.x86_64                 65/65
+  Verifying  : perl-Exporter-5.68-3.amzn2.noarch                           1/65
+  Verifying  : perl-Time-Local-1.2300-2.amzn2.noarch                       2/65
+  Verifying  : libaio-0.3.109-13.amzn2.0.2.x86_64                          3/65
+  Verifying  : numactl-libs-2.0.9-7.amzn2.x86_64                           4/65
+  Verifying  : perl-Pod-Usage-1.63-3.amzn2.noarch                          5/65
+  Verifying  : procps-ng-3.3.10-17.amzn2.2.2.x86_64                        6/65
+  Verifying  : cracklib-2.9.0-11.amzn2.0.2.x86_64                          7/65
+  Verifying  : 1:dbus-libs-1.10.24-7.amzn2.x86_64                          8/65
+  Verifying  : ncurses-compat-libs-6.0-8.20170212.amzn2.1.2.x86_64         9/65
+  Verifying  : qrencode-libs-3.4.1-3.amzn2.0.2.x86_64                     10/65
+  Verifying  : lz4-1.7.5-2.amzn2.0.1.x86_64                               11/65
+  Verifying  : mysql-community-libs-8.0.17-1.el7.x86_64                   12/65
+  Verifying  : perl-Filter-1.49-3.amzn2.0.2.x86_64                        13/65
+  Verifying  : perl-Encode-2.51-7.amzn2.0.2.x86_64                        14/65
+  Verifying  : acl-2.2.51-14.amzn2.x86_64                                 15/65
+  Verifying  : perl-threads-shared-1.43-6.amzn2.0.2.x86_64                16/65
+  Verifying  : libsemanage-2.5-11.amzn2.x86_64                            17/65
+  Verifying  : libutempter-1.1.6-4.amzn2.0.2.x86_64                       18/65
+  Verifying  : 4:perl-macros-5.16.3-294.amzn2.x86_64                      19/65
+  Verifying  : systemd-libs-219-57.amzn2.0.9.x86_64                       20/65
+  Verifying  : perl-constant-1.27-2.amzn2.0.1.noarch                      21/65
+  Verifying  : 1:perl-Pod-Simple-3.28-4.amzn2.noarch                      22/65
+  Verifying  : kmod-libs-25-3.amzn2.0.2.x86_64                            23/65
+  Verifying  : libsmartcols-2.30.2-2.amzn2.0.4.x86_64                     24/65
+  Verifying  : perl-Scalar-List-Utils-1.27-248.amzn2.0.2.x86_64           25/65
+  Verifying  : systemd-219-57.amzn2.0.9.x86_64                            26/65
+  Verifying  : libfdisk-2.30.2-2.amzn2.0.4.x86_64                         27/65
+  Verifying  : perl-threads-1.87-4.amzn2.0.2.x86_64                       28/65
+  Verifying  : 4:perl-libs-5.16.3-294.amzn2.x86_64                        29/65
+  Verifying  : elfutils-libs-0.170-4.amzn2.x86_64                         30/65
+  Verifying  : cracklib-dicts-2.9.0-11.amzn2.0.2.x86_64                   31/65
+  Verifying  : cryptsetup-libs-1.7.4-4.amzn2.x86_64                       32/65
+  Verifying  : elfutils-default-yama-scope-0.170-4.amzn2.noarch           33/65
+  Verifying  : perl-PathTools-3.40-5.amzn2.0.2.x86_64                     34/65
+  Verifying  : perl-HTTP-Tiny-0.033-3.amzn2.noarch                        35/65
+  Verifying  : util-linux-2.30.2-2.amzn2.0.4.x86_64                       36/65
+  Verifying  : libcap-ng-0.7.5-4.amzn2.0.4.x86_64                         37/65
+  Verifying  : audit-libs-2.8.1-3.amzn2.1.x86_64                          38/65
+  Verifying  : mysql-community-common-8.0.17-1.el7.x86_64                 39/65
+  Verifying  : ustr-1.0.4-16.amzn2.0.3.x86_64                             40/65
+  Verifying  : 4:perl-Time-HiRes-1.9725-3.amzn2.0.2.x86_64                41/65
+  Verifying  : pam-1.1.8-22.amzn2.x86_64                                  42/65
+  Verifying  : 1:perl-parent-0.225-244.amzn2.0.1.noarch                   43/65
+  Verifying  : perl-Socket-2.010-4.amzn2.0.2.x86_64                       44/65
+  Verifying  : kmod-25-3.amzn2.0.2.x86_64                                 45/65
+  Verifying  : 4:perl-5.16.3-294.amzn2.x86_64                             46/65
+  Verifying  : perl-Carp-1.26-244.amzn2.noarch                            47/65
+  Verifying  : 1:dbus-1.10.24-7.amzn2.x86_64                              48/65
+  Verifying  : libpwquality-1.2.3-5.amzn2.x86_64                          49/65
+  Verifying  : perl-File-Temp-0.23.01-3.amzn2.noarch                      50/65
+  Verifying  : 2:shadow-utils-4.1.5.1-24.amzn2.0.2.x86_64                 51/65
+  Verifying  : perl-Pod-Perldoc-3.20-4.amzn2.noarch                       52/65
+  Verifying  : mysql-community-server-8.0.17-1.el7.x86_64                 53/65
+  Verifying  : gzip-1.5-10.amzn2.x86_64                                   54/65
+  Verifying  : 7:device-mapper-libs-1.02.146-4.amzn2.0.2.x86_64           55/65
+  Verifying  : 7:device-mapper-1.02.146-4.amzn2.0.2.x86_64                56/65
+  Verifying  : groff-base-1.22.2-8.amzn2.0.2.x86_64                       57/65
+  Verifying  : mysql-community-client-8.0.17-1.el7.x86_64                 58/65
+  Verifying  : perl-Text-ParseWords-3.29-4.amzn2.noarch                   59/65
+  Verifying  : perl-File-Path-2.09-2.amzn2.noarch                         60/65
+  Verifying  : perl-Getopt-Long-2.40-3.amzn2.noarch                       61/65
+  Verifying  : net-tools-2.0-0.22.20131004git.amzn2.0.2.x86_64            62/65
+  Verifying  : perl-Storable-2.45-3.amzn2.0.2.x86_64                      63/65
+  Verifying  : perl-podlators-2.5.1-3.amzn2.0.1.noarch                    64/65
+  Verifying  : 1:perl-Pod-Escapes-1.04-294.amzn2.noarch                   65/65
+
+Installed:
+  mysql-community-server.x86_64 0:8.0.17-1.el7
+
+Dependency Installed:
+  acl.x86_64 0:2.2.51-14.amzn2
+  audit-libs.x86_64 0:2.8.1-3.amzn2.1
+  cracklib.x86_64 0:2.9.0-11.amzn2.0.2
+  cracklib-dicts.x86_64 0:2.9.0-11.amzn2.0.2
+  cryptsetup-libs.x86_64 0:1.7.4-4.amzn2
+  dbus.x86_64 1:1.10.24-7.amzn2
+  dbus-libs.x86_64 1:1.10.24-7.amzn2
+  device-mapper.x86_64 7:1.02.146-4.amzn2.0.2
+  device-mapper-libs.x86_64 7:1.02.146-4.amzn2.0.2
+  elfutils-default-yama-scope.noarch 0:0.170-4.amzn2
+  elfutils-libs.x86_64 0:0.170-4.amzn2
+  groff-base.x86_64 0:1.22.2-8.amzn2.0.2
+  gzip.x86_64 0:1.5-10.amzn2
+  kmod.x86_64 0:25-3.amzn2.0.2
+  kmod-libs.x86_64 0:25-3.amzn2.0.2
+  libaio.x86_64 0:0.3.109-13.amzn2.0.2
+  libcap-ng.x86_64 0:0.7.5-4.amzn2.0.4
+  libfdisk.x86_64 0:2.30.2-2.amzn2.0.4
+  libpwquality.x86_64 0:1.2.3-5.amzn2
+  libsemanage.x86_64 0:2.5-11.amzn2
+  libsmartcols.x86_64 0:2.30.2-2.amzn2.0.4
+  libutempter.x86_64 0:1.1.6-4.amzn2.0.2
+  lz4.x86_64 0:1.7.5-2.amzn2.0.1
+  mysql-community-client.x86_64 0:8.0.17-1.el7
+  mysql-community-common.x86_64 0:8.0.17-1.el7
+  mysql-community-libs.x86_64 0:8.0.17-1.el7
+  ncurses-compat-libs.x86_64 0:6.0-8.20170212.amzn2.1.2
+  net-tools.x86_64 0:2.0-0.22.20131004git.amzn2.0.2
+  numactl-libs.x86_64 0:2.0.9-7.amzn2
+  pam.x86_64 0:1.1.8-22.amzn2
+  perl.x86_64 4:5.16.3-294.amzn2
+  perl-Carp.noarch 0:1.26-244.amzn2
+  perl-Encode.x86_64 0:2.51-7.amzn2.0.2
+  perl-Exporter.noarch 0:5.68-3.amzn2
+  perl-File-Path.noarch 0:2.09-2.amzn2
+  perl-File-Temp.noarch 0:0.23.01-3.amzn2
+  perl-Filter.x86_64 0:1.49-3.amzn2.0.2
+  perl-Getopt-Long.noarch 0:2.40-3.amzn2
+  perl-HTTP-Tiny.noarch 0:0.033-3.amzn2
+  perl-PathTools.x86_64 0:3.40-5.amzn2.0.2
+  perl-Pod-Escapes.noarch 1:1.04-294.amzn2
+  perl-Pod-Perldoc.noarch 0:3.20-4.amzn2
+  perl-Pod-Simple.noarch 1:3.28-4.amzn2
+  perl-Pod-Usage.noarch 0:1.63-3.amzn2
+  perl-Scalar-List-Utils.x86_64 0:1.27-248.amzn2.0.2
+  perl-Socket.x86_64 0:2.010-4.amzn2.0.2
+  perl-Storable.x86_64 0:2.45-3.amzn2.0.2
+  perl-Text-ParseWords.noarch 0:3.29-4.amzn2
+  perl-Time-HiRes.x86_64 4:1.9725-3.amzn2.0.2
+  perl-Time-Local.noarch 0:1.2300-2.amzn2
+  perl-constant.noarch 0:1.27-2.amzn2.0.1
+  perl-libs.x86_64 4:5.16.3-294.amzn2
+  perl-macros.x86_64 4:5.16.3-294.amzn2
+  perl-parent.noarch 1:0.225-244.amzn2.0.1
+  perl-podlators.noarch 0:2.5.1-3.amzn2.0.1
+  perl-threads.x86_64 0:1.87-4.amzn2.0.2
+  perl-threads-shared.x86_64 0:1.43-6.amzn2.0.2
+  procps-ng.x86_64 0:3.3.10-17.amzn2.2.2
+  qrencode-libs.x86_64 0:3.4.1-3.amzn2.0.2
+  shadow-utils.x86_64 2:4.1.5.1-24.amzn2.0.2
+  systemd.x86_64 0:219-57.amzn2.0.9
+  systemd-libs.x86_64 0:219-57.amzn2.0.9
+  ustr.x86_64 0:1.0.4-16.amzn2.0.3
+  util-linux.x86_64 0:2.30.2-2.amzn2.0.4
+
+Complete!
+Removing intermediate container 8e508c875222
+ ---> 42aa6da87e7f
+Step 6/11 : COPY docker-entrypoint.sh /usr/local/bin/
+ ---> f62374447ef5
+Step 7/11 : RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
+ ---> Running in 7811726cc6ae
+Removing intermediate container 7811726cc6ae
+ ---> 18cef018f872
+Step 8/11 : RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
+ ---> Running in d0c466c7bf2a
+Removing intermediate container d0c466c7bf2a
+ ---> 1b0f9cb086a8
+Step 9/11 : ENTRYPOINT ["docker-entrypoint.sh"]
+ ---> Running in 8b4aabaa7df1
+Removing intermediate container 8b4aabaa7df1
+ ---> 90060c3bdf44
+Step 10/11 : EXPOSE 3306
+ ---> Running in 0d2b2d6b5d7a
+Removing intermediate container 0d2b2d6b5d7a
+ ---> 1d0958176ecc
+Step 11/11 : CMD ["mysqld"]
+ ---> Running in b6c5e6c7fca6
+Removing intermediate container b6c5e6c7fca6
+ ---> 26dae45f46d5
+Successfully built 26dae45f46d5
+Successfully tagged mysqlimage:latest
