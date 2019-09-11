@@ -1,0 +1,42 @@
+version: '3.7'
+
+services: # containers. same as docker run
+  servicename: # a friendly name. DNS name inside network
+    image:
+    command: # replace the default CMD specified by the image
+    environment: # same as -e in docker run
+    volumes: # same as -v in docker run
+  servicename2:
+
+volumes: # same as docker volume create
+
+# Definitions for 'frontend' and 'backend' attacheble overlay networks;
+networks:
+  frontend:
+    driver: overlay
+    attachable: true
+    name: frontend-overlay
+  backend:
+    driver: overlay
+    attachable: true
+    name: backend-overlay
+
+# Definitions for external Docker secrets 'mysql_user', 'mysql_pass', 'mysql_root_pass' and 'mysql_db';
+secrets:
+  mysql_user:
+    external: true
+  mysql_pass:
+    external: true
+  mysql_root_pass:
+    external: true
+  mysql_db:
+    external: true
+
+# Definitions for Docker configs 'lb_config' and 'web_config' with Load Balancer Apache configuration
+# and Web Server virtual host settings content;
+configs:
+  lb_config: # Load Balancer Apache configuration
+  # Create Apache Load Balancer configuration which will balance traffic between 'web' service containers by Round Robin method.
+    external: true
+  web_config: # Web Server virtual host settings
+    external: true

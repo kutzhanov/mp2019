@@ -122,7 +122,14 @@ Build image for Load Balancer and push to Docker Hub
 
 docker image build -t myapachelb .
 docker container run -p 80:80 --name myapache --rm -it myapachelb bash
-$docker container run -p 80:80 --name myapache --rm -d myapachelb
+docker container run -p 80:80 --name myapache --rm -d myapachelb
+docker login
+docker tag local-image:tagname reponame:tagname
+docker push reponame:tagname
+
+docker tag myapachelb:latest kutzhanov/myapache:latest
+docker push kutzhanov/myapache
+
 
 Task 4
 
@@ -139,12 +146,14 @@ copy web server configuration;
 port 8080 exposed;
 ensure that Apache service is up and running;
 
-
-Build image for Web Server and push to Docker Hub
-
 docker image build -t mywebimage .
 docker container run --name myweb -p 8080:8080 -it --rm mywebimage /bin/bash
 docker container run --name myweb -p 8080:8080 -d --rm mywebimage
+
+Build image for Web Server and push to Docker Hub
+docker tag mywebimage:latest kutzhanov/myweb:latest
+docker push kutzhanov/myweb
+
 
 Task 5
 
@@ -160,6 +169,8 @@ ensure that MySQL service is up and running;
 
 
 Build image for Database Server and push to Docker Hub
+docker tag mysqlimage:latest kutzhanov/mysql:latest
+docker push kutzhanov/mysql
 
 
 docker image build -t mysqlimage .
@@ -168,57 +179,45 @@ docker container run --name mysql -p 8080:8080 -it --rm mysqlimage /bin/bash
 Task 6
 
 Create Docker Compose file which deploy a list of resources:
-
-
-Definitions for 'frontend' and 'backend' attacheble overlay networks;
-Definitions for external Docker secrets 'mysql_user', 'mysql_pass', 'mysql_root_pass' and 'mysql_db';
-Definitions for Docker configs 'lb_config' and 'web_config' with Load Balancer Apache configuration and Web Server virtual host settings content;
-Definitions for 'web_data' volume;
-Docker Swarm service called 'balancer' with the configuration:
-
-
-based on Load Balancer image located in Docker Hub;
-port 80 is exposed;
-Apache configuration defined in Docker config;
-located in 'frontend' network;
-the service has one replica;
-restart policy is 'on-failure';
-reserve container resources by 25% of CPU and 256MB Memory;
-limit container resources by 50% of CPU and 512MB Memory;
-ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
-add label 'service' with value 'load_balancer';
-
-
-Docker Swarm service called 'web' with the configuration:
-
-
-based on Web Server image located in Docker Hub;
-port 8080 is exposed;
-Apache configuration for virtual host defined in Docker config;
-located in 'frontend' and 'backend' networks;
-the service has two replicas;
-restart policy is 'on-failure';
-reserve container resources by 25% of CPU and 256MB Memory;
-limit container resources by 50% of CPU and 512MB Memory;
-ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
-add label 'service' with value 'web_server';
-mount 'web_data' volume into root directory according to virtual host configuration on the service containers;
-evironment variables for MySQL user, password, database name and server name with values defined in external Docker secrets exclude server name;
-
-
-Docker Swarm service called 'db' with the configuration:
-
-
-based on Database Server image located in Docker Hub;
-port 3306 is exposed;
-located in 'backend' network;
-the service has one replica;
-restart policy is 'on-failure';
-reserve container resources by 50% of CPU and 512MB Memory;
-limit container resources by 70% of CPU and 1024MB Memory;
-ensure that the service containers will be deployed only on nodes where 'role' label defined in 'back';
-add label 'service' with value 'database_server';
-evironment variables for MySQL user, password, root user password and database name with values defined in external Docker secrets;
+	Definitions for 'frontend' and 'backend' attacheble overlay networks;
+	Definitions for external Docker secrets 'mysql_user', 'mysql_pass', 'mysql_root_pass' and 'mysql_db';
+	Definitions for Docker configs 'lb_config' and 'web_config' with Load Balancer Apache configuration and Web Server virtual host settings content;
+	Definitions for 'web_data' volume;
+	Docker Swarm service called 'balancer' with the configuration:
+		based on Load Balancer image located in Docker Hub;
+		port 80 is exposed;
+		Apache configuration defined in Docker config;
+		located in 'frontend' network;
+		the service has one replica;
+		restart policy is 'on-failure';
+		reserve container resources by 25% of CPU and 256MB Memory;
+		limit container resources by 50% of CPU and 512MB Memory;
+		ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
+		add label 'service' with value 'load_balancer';
+	Docker Swarm service called 'web' with the configuration:
+		based on Web Server image located in Docker Hub;
+		port 8080 is exposed;
+		Apache configuration for virtual host defined in Docker config;
+		located in 'frontend' and 'backend' networks;
+		the service has two replicas;
+		restart policy is 'on-failure';
+		reserve container resources by 25% of CPU and 256MB Memory;
+		limit container resources by 50% of CPU and 512MB Memory;
+		ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
+		add label 'service' with value 'web_server';
+		mount 'web_data' volume into root directory according to virtual host configuration on the service containers;
+		evironment variables for MySQL user, password, database name and server name with values defined in external Docker secrets exclude server name;
+	Docker Swarm service called 'db' with the configuration:
+		based on Database Server image located in Docker Hub;
+		port 3306 is exposed;
+		located in 'backend' network;
+		the service has one replica;
+		restart policy is 'on-failure';
+		reserve container resources by 50% of CPU and 512MB Memory;
+		limit container resources by 70% of CPU and 1024MB Memory;
+		ensure that the service containers will be deployed only on nodes where 'role' label defined in 'back';
+		add label 'service' with value 'database_server';
+		evironment variables for MySQL user, password, root user password and database name with values defined in external Docker secrets;
 
 
 Task 7
