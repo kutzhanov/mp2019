@@ -1,42 +1,99 @@
 version: '3.7'
 
-# Docker Swarm service called 'balancer' with the configuration:
-# 		based on Load Balancer image located in Docker Hub;
-# 		port 80 is exposed;
-# 		Apache configuration defined in Docker config;
-# 		located in 'frontend' network;
-# 		the service has one replica;
-# 		restart policy is 'on-failure';
-# 		reserve container resources by 25% of CPU and 256MB Memory;
-# 		limit container resources by 50% of CPU and 512MB Memory;
-# 		ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
-# 		add label 'service' with value 'load_balancer';
-
 services:
+  # Docker Swarm service called 'balancer' with the configuration:
   balancer:
+    #	based on Load Balancer image located in Docker Hub;
     image: kutzhanov/myapache:latest
+    # port 80 is exposed;
     expose:
       - "80"
+    # Apache configuration defined in Docker config;
     configs:
-      - lb_config
+      - source: lb_config
+        target: /etc/httpd/conf.d/
+        mode: 655
+    # located in 'frontend' network;
     networks:
       - frontend
     deploy:
+      # the service has one replica;
       replicas: 1
+      #	ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
       placement:
         constraints:
           - node.labels.role == front
+      # restart policy is 'on-failure';
       restart_policy:
         condition: on-failure
       resources:
+        # reserve container resources by 25% of CPU and 256MB Memory;
         reservations:
           cpus: '0.25'
           memory: 256M
+        # limit container resources by 50% of CPU and 512MB Memory;
         limits:
           cpus: '0.50'
           memory: 512M
+      # add label 'service' with value 'load_balancer';
       labels:
         service: "load_balancer"
+
+  # Docker Swarm service called 'web' with the configuration:
+  web:
+    # based on Web Server image located in Docker Hub;
+    image: kutzhanov/myweb:latest
+    # port 8080 is exposed;
+    expose:
+      - "8080"
+    # Apache configuration for virtual host defined in Docker config;
+    configs:
+      - source: web_config
+        target: /etc/httpd/conf/
+        mode: 655
+    #	located in 'frontend' and 'backend' networks;
+    networks:
+      - frontend
+      - backend
+    deploy:
+      # the service has two replicas;
+      replicas: 2
+      #	ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
+      placement:
+        constraints:
+          - node.labels.role == front
+      #	restart policy is 'on-failure';
+      restart_policy:
+        condition: on-failure
+      resources:
+        # reserve container resources by 25% of CPU and 256MB Memory;
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+        #	limit container resources by 50% of CPU and 512MB Memory;
+        limits:
+          cpus: '0.50'
+          memory: 512M
+      # add label 'service' with value 'web_server';
+      labels:
+        service: "web_server"
+    # mount 'web_data' volume into root directory according to virtual host configuration on the service containers;
+    volumes:
+      - type: volume
+        source: web_data
+        target: /var/www/mp2019/ # ???
+    #	environment variables for MySQL user, password, database name and server name with values
+    # defined in external Docker secrets exclude server name;
+    # environment:
+    #   MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+    #   MYSQL_DATABASE: wordpress
+    #   MYSQL_USER: wordpress
+    #   MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - mysql_user
+      - mysql_pass
+      - mysql_root_pass
+      - mysql_db
 
 # Definitions for 'frontend' and 'backend' attacheble overlay networks;
 networks:
