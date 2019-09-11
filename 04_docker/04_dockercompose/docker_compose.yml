@@ -12,8 +12,8 @@ version: '3.7'
 # 		ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
 # 		add label 'service' with value 'load_balancer';
 
-services: # containers. same as docker run
-  balancer: # a friendly name. DNS name inside network
+services:
+  balancer:
     image: kutzhanov/myapache:latest
     expose:
       - "80"
