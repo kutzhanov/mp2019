@@ -219,7 +219,9 @@ Create Docker Compose file which deploy a list of resources:
 		add label 'service' with value 'database_server';
 		evironment variables for MySQL user, password, root user password and database name with values defined in external Docker secrets;
 
-
+docker stack deploy
+		
+		
 Task 7
 
 Deploy Docker infrastructure trough 'main' template

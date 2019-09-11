@@ -15,11 +15,17 @@ version: '3.7'
 services: # containers. same as docker run
   balancer: # a friendly name. DNS name inside network
     image: kutzhanov/myapache:latest
-    expose: "80"
-    configs: lb_config
-    networks: frontend
+    expose:
+      - "80"
+    configs:
+      - lb_config
+    networks:
+      - frontend
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.role == front
       restart_policy:
         condition: on-failure
       resources:
@@ -31,11 +37,6 @@ services: # containers. same as docker run
           memory: 512M
       labels:
         service: "load_balancer"
-
-    command: # replace the default CMD specified by the image
-    environment: # same as -e in docker run
-    volumes: # same as -v in docker run
-  servicename2:
 
 # Definitions for 'frontend' and 'backend' attacheble overlay networks;
 networks:
