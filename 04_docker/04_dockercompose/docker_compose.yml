@@ -1,14 +1,41 @@
 version: '3.7'
 
+# Docker Swarm service called 'balancer' with the configuration:
+# 		based on Load Balancer image located in Docker Hub;
+# 		port 80 is exposed;
+# 		Apache configuration defined in Docker config;
+# 		located in 'frontend' network;
+# 		the service has one replica;
+# 		restart policy is 'on-failure';
+# 		reserve container resources by 25% of CPU and 256MB Memory;
+# 		limit container resources by 50% of CPU and 512MB Memory;
+# 		ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
+# 		add label 'service' with value 'load_balancer';
+
 services: # containers. same as docker run
-  servicename: # a friendly name. DNS name inside network
-    image:
+  balancer: # a friendly name. DNS name inside network
+    image: kutzhanov/myapache:latest
+    expose: "80"
+    configs: lb_config
+    networks: frontend
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+        limits:
+          cpus: '0.50'
+          memory: 512M
+      labels:
+        service: "load_balancer"
+
     command: # replace the default CMD specified by the image
     environment: # same as -e in docker run
     volumes: # same as -v in docker run
   servicename2:
-
-volumes: # same as docker volume create
 
 # Definitions for 'frontend' and 'backend' attacheble overlay networks;
 networks:
@@ -37,6 +64,10 @@ secrets:
 configs:
   lb_config: # Load Balancer Apache configuration
   # Create Apache Load Balancer configuration which will balance traffic between 'web' service containers by Round Robin method.
-    external: true
+    file: ../01_proxy/mod_proxy.conf
   web_config: # Web Server virtual host settings
-    external: true
+    file: ../02_web/httpd.conf
+
+# Definitions for 'web_data' volume
+volumes: # same as docker volume create
+  web_data:
