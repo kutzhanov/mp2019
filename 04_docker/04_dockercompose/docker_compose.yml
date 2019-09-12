@@ -84,11 +84,54 @@ services:
         target: /var/www/mp2019/ # ???
     #	environment variables for MySQL user, password, database name and server name with values
     # defined in external Docker secrets exclude server name;
-    # environment:
-    #   MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
-    #   MYSQL_DATABASE: wordpress
-    #   MYSQL_USER: wordpress
-    #   MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    environment:
+      MYSQL_USER: /run/secrets/mysql_user
+      MYSQL_PASSWORD: /run/secrets/mysql_pass
+      MYSQL_DATABASE: /run/secrets/mysql_db
+      MYSQL_SERVERNAME: # ???
+    secrets:
+      - mysql_user
+      - mysql_pass
+      - mysql_db
+
+  # Docker Swarm service called 'db' with the configuration:
+  db:
+    # based on Database Server image located in Docker Hub;
+    image: kutzhanov/mysql:latest
+    # port 3306 is exposed;
+    expose:
+      - "3306"
+    #	located in 'backend' network;
+    networks:
+      - backend
+    deploy:
+      # the service has one replica;
+      replicas: 1
+      # ensure that the service containers will be deployed only on nodes where 'role' label defined in 'back';
+      placement:
+        constraints:
+          - node.labels.role == back
+      #	restart policy is 'on-failure';
+      restart_policy:
+        condition: on-failure
+      resources:
+        # reserve container resources by 50% of CPU and 512MB Memory;
+        reservations:
+          cpus: '0.50'
+          memory: 512M
+        # limit container resources by 70% of CPU and 1024MB Memory;
+        limits:
+          cpus: '0.70'
+          memory: 1024M
+      # add label 'service' with value 'database_server';
+      labels:
+        service: "database_server"
+    # environment variables for MySQL user, password, root user password and database name with values defined in external Docker secrets;
+    environment:
+      MYSQL_USER: /run/secrets/mysql_user
+      MYSQL_PASSWORD: /run/secrets/mysql_pass
+      MYSQL_ROOT_PASSWORD: /run/secrets/mysql_root_pass
+      MYSQL_DATABASE: /run/secrets/mysql_db
     secrets:
       - mysql_user
       - mysql_pass
