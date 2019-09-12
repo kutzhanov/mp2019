@@ -6,23 +6,22 @@ services:
     #	based on Load Balancer image located in Docker Hub;
     image: kutzhanov/myapache:latest
     # port 80 is exposed;
-    expose:
+    ports:
       - "80"
+    # located in 'frontend' network;
+    networks:
+      - frontend
     # Apache configuration defined in Docker config;
     configs:
       - source: lb_config
         target: /etc/httpd/conf.d/
         mode: 655
-    # located in 'frontend' network;
-    networks:
-      - frontend
     deploy:
       # the service has one replica;
       replicas: 1
       #	ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
       placement:
-        constraints:
-          - node.labels.role == front
+        constraints: [node.labels.role == front]
       # restart policy is 'on-failure';
       restart_policy:
         condition: on-failure
@@ -44,24 +43,23 @@ services:
     # based on Web Server image located in Docker Hub;
     image: kutzhanov/myweb:latest
     # port 8080 is exposed;
-    expose:
+    ports:
       - "8080"
+    #	located in 'frontend' and 'backend' networks;
+    networks:
+      - frontend
+      - backend
     # Apache configuration for virtual host defined in Docker config;
     configs:
       - source: web_config
         target: /etc/httpd/conf/
         mode: 655
-    #	located in 'frontend' and 'backend' networks;
-    networks:
-      - frontend
-      - backend
     deploy:
       # the service has two replicas;
       replicas: 2
       #	ensure that the service containers will be deployed only on nodes where 'role' label defined in 'front';
       placement:
-        constraints:
-          - node.labels.role == front
+        constraints: [node.labels.role == front]
       #	restart policy is 'on-failure';
       restart_policy:
         condition: on-failure
@@ -93,13 +91,15 @@ services:
       - mysql_user
       - mysql_pass
       - mysql_db
+    depends_on:
+      - db
 
   # Docker Swarm service called 'db' with the configuration:
   db:
     # based on Database Server image located in Docker Hub;
     image: kutzhanov/mysql:latest
     # port 3306 is exposed;
-    expose:
+    ports:
       - "3306"
     #	located in 'backend' network;
     networks:
@@ -109,8 +109,7 @@ services:
       replicas: 1
       # ensure that the service containers will be deployed only on nodes where 'role' label defined in 'back';
       placement:
-        constraints:
-          - node.labels.role == back
+        constraints: [node.labels.role == back]
       #	restart policy is 'on-failure';
       restart_policy:
         condition: on-failure
