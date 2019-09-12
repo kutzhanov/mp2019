@@ -218,8 +218,6 @@ Create Docker Compose file which deploy a list of resources:
 		ensure that the service containers will be deployed only on nodes where 'role' label defined in 'back';
 		add label 'service' with value 'database_server';
 		evironment variables for MySQL user, password, root user password and database name with values defined in external Docker secrets;
-
-docker stack deploy
 		
 		
 Task 7
