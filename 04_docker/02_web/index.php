@@ -1,9 +1,9 @@
 <?php
 echo gethostname();
 
-$servername = "dr12kk87lze2n5g.cm2uokxn1kjg.us-east-1.rds.amazonaws.com";
-$username = "admin";
-$password = "Rt80j3ICd";
+$servername = file_get_contents(getenv('MYSQL_SERVERNAME'));
+$username = file_get_contents(getenv('MYSQL_USER'));
+$password = file_get_contents(getenv('MYSQL_PASSWORD'));
 $hostname = gethostname();
 // Create connection
 $conn = new mysqli($servername, $username, $password);
