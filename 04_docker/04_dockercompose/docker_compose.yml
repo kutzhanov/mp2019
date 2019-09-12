@@ -83,10 +83,10 @@ services:
     #	environment variables for MySQL user, password, database name and server name with values
     # defined in external Docker secrets exclude server name;
     environment:
-      MYSQL_USER: /run/secrets/mysql_user
-      MYSQL_PASSWORD: /run/secrets/mysql_pass
-      MYSQL_DATABASE: /run/secrets/mysql_db
-      MYSQL_SERVERNAME: # ???
+      MYSQL_USER_FILE: /run/secrets/mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_pass
+      MYSQL_DATABASE_FILE: /run/secrets/mysql_db
+      MYSQL_SERVERNAME_FILE: # ???
     secrets:
       - mysql_user
       - mysql_pass
@@ -127,10 +127,10 @@ services:
         service: "database_server"
     # environment variables for MySQL user, password, root user password and database name with values defined in external Docker secrets;
     environment:
-      MYSQL_USER: /run/secrets/mysql_user
-      MYSQL_PASSWORD: /run/secrets/mysql_pass
-      MYSQL_ROOT_PASSWORD: /run/secrets/mysql_root_pass
-      MYSQL_DATABASE: /run/secrets/mysql_db
+      MYSQL_USER_FILE: /run/secrets/mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_pass
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_pass
+      MYSQL_DATABASE_FILE: /run/secrets/mysql_db
     secrets:
       - mysql_user
       - mysql_pass

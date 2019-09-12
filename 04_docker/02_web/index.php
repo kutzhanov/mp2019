@@ -1,9 +1,9 @@
 <?php
 echo gethostname();
 
-$servername = file_get_contents(getenv('MYSQL_SERVERNAME'));
-$username = file_get_contents(getenv('MYSQL_USER'));
-$password = file_get_contents(getenv('MYSQL_PASSWORD'));
+$servername = file_get_contents(getenv('MYSQL_SERVERNAME_FILE'));
+$username = file_get_contents(getenv('MYSQL_USER_FILE'));
+$password = file_get_contents(getenv('MYSQL_PASSWORD_FILE'));
 $hostname = gethostname();
 // Create connection
 $conn = new mysqli($servername, $username, $password);
