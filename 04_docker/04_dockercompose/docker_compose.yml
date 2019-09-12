@@ -82,15 +82,15 @@ services:
         target: /var/www/mp2019/ # ???
     #	environment variables for MySQL user, password, database name and server name with values
     # defined in external Docker secrets exclude server name;
+    secrets:
+      - mysql_user
+      - mysql_pass
+      - mysql_db
     environment:
       MYSQL_USER_FILE: /run/secrets/mysql_user
       MYSQL_PASSWORD_FILE: /run/secrets/mysql_pass
       MYSQL_DATABASE_FILE: /run/secrets/mysql_db
       MYSQL_SERVERNAME_FILE: # ???
-    secrets:
-      - mysql_user
-      - mysql_pass
-      - mysql_db
     depends_on:
       - db
 
@@ -126,16 +126,16 @@ services:
       labels:
         service: "database_server"
     # environment variables for MySQL user, password, root user password and database name with values defined in external Docker secrets;
-    environment:
-      MYSQL_USER_FILE: /run/secrets/mysql_user
-      MYSQL_PASSWORD_FILE: /run/secrets/mysql_pass
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_pass
-      MYSQL_DATABASE_FILE: /run/secrets/mysql_db
     secrets:
       - mysql_user
       - mysql_pass
       - mysql_root_pass
       - mysql_db
+    environment:
+      MYSQL_USER_FILE: /run/secrets/mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_pass
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_pass
+      MYSQL_DATABASE_FILE: /run/secrets/mysql_db
 
 # Definitions for 'frontend' and 'backend' attacheble overlay networks;
 networks:
