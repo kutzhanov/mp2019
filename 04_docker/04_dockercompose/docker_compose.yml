@@ -164,9 +164,9 @@ secrets:
 configs:
   lb_config: # Load Balancer Apache configuration
   # Create Apache Load Balancer configuration which will balance traffic between 'web' service containers by Round Robin method.
-    file: ../01_proxy/mod_proxy.conf
+    file: mod_proxy.conf
   web_config: # Web Server virtual host settings
-    file: ../02_web/httpd.conf
+    file: httpd.conf
 
 # Definitions for 'web_data' volume
 volumes: # same as docker volume create
