@@ -1,30 +1,30 @@
-# Create Dockerfile to setup Apache Web Server with the following features:
-#
-# source image is latest amazonlinux;
-# image maintainer is defined;
-# Apache, php and php-mysql installation happens during the container building process;
-# ensure root directory exist;
-# copy 'index.php' to root directory;
-# copy web server configuration;
-# port 8080 exposed;
-# ensure that Apache service is up and running;
+# Dockerfile to setup Apache Web Server with the following features:
 
+# source image is latest amazonlinux;
 FROM amazonlinux:latest
+
+# image maintainer is defined;
 LABEL maintainer="Timur_Kutzhanov@epam.com"
 
+# Apache, php and php-mysql installation happens during the container building process;
 RUN yum update -y && yum install -y \
 httpd \
 php \
 php-mysqlnd \
 && yum clean all
 
+# ensure root directory exist;
 WORKDIR /var/www/mp2019/
 
+# copy 'index.php' to root directory;
 COPY index.php /var/www/mp2019/
 RUN chmod 644 /var/www/mp2019/index.php
 
+# copy web server configuration;
 COPY httpd.conf /etc/httpd/conf/
 
+# port 8080 exposed;
 EXPOSE 8080
 
+# ensure that Apache service is up and running;
 CMD /usr/sbin/httpd -D FOREGROUND
