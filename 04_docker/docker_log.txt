@@ -166,7 +166,11 @@ use entrypoint.sh as entrypoint(!!! Do not forget make it executable);
 port 3306 exposed;
 ensure that MySQL service is up and running;
 
-docker container run -d --rm --name mysql kutzhanov/myapache
+docker image build -t kutzhanov/mysql .
+docker container run -d -p 3306:3306 --rm --name mysql kutzhanov/myapache
+
+docker container run --name mysql -p 8080:8080 -it --rm mysqlimage /bin/bash
+
 
 AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
 
@@ -175,9 +179,6 @@ Build image for Database Server and push to Docker Hub
 docker tag mysqlimage:latest kutzhanov/mysql:latest
 docker push kutzhanov/mysql
 
-
-docker image build -t mysqlimage .
-docker container run --name mysql -p 8080:8080 -it --rm mysqlimage /bin/bash
 
 Task 6
 
