@@ -1,7 +1,7 @@
 <?php
 echo gethostname();
 
-$servername = file_get_contents(getenv('MYSQL_SERVERNAME_FILE'));
+$servername = file_get_contents(getenv('MYSQL_SERVERNAME'));
 $username = file_get_contents(getenv('MYSQL_USER_FILE'));
 $password = file_get_contents(getenv('MYSQL_PASSWORD_FILE'));
 $hostname = gethostname();

@@ -79,7 +79,7 @@ services:
     volumes:
       - type: volume
         source: web_data
-        target: /var/www/mp2019/ # ???
+        target: /var/www/mp2019/
     #	environment variables for MySQL user, password, database name and server name with values
     # defined in external Docker secrets exclude server name;
     secrets:
@@ -90,7 +90,7 @@ services:
       MYSQL_USER_FILE: /run/secrets/mysql_user
       MYSQL_PASSWORD_FILE: /run/secrets/mysql_pass
       MYSQL_DATABASE_FILE: /run/secrets/mysql_db
-      MYSQL_SERVERNAME_FILE: # ???
+      MYSQL_SERVERNAME: db
     depends_on:
       - db
 
