@@ -232,21 +232,32 @@ Initiate Docker Swarm cluster on one of the machine and join two other as worker
 Task 9
 
 Update two nodes with label 'role' which has value 'front' and one with value 'back'
-docker node update --label-add role=front <node-id>
+docker node update --label-add role=back w7fiz
 
 Task 10
 
 Upload Docker Compose file, Load balancer configuration and Web Server virtual host settings from local machine to 'mp2019-docker' S3 bucket. Download the content on Docker Swarm manager node
+aws s3 cp s3://mp2019-docker-kutzhanov . --recursive
 
 
 Task 11
 
 Create Docker secrets 'mysql_user', 'mysql_pass', 'mysql_root_pass', 'mysql_db' which contain values for MySQL user, password, root user password and database name
 
+echo "dbuser" | docker secret create mysql_user -
+echo "dbpass" | docker secret create mysql_pass -
+echo "123456Qw" | docker secret create mysql_root_pass -
+echo "mydb" | docker secret create mysql_db -
+
 
 Task 12
 
 Deploy Docker Swarm stack called 'mp2019' from Compose file
+
+docker stack deploy -с docker_compose.yml mp2019
+docker stack services mp2019
+docker stack ps mp2019
+docker stack rm mp2019
 
 
 Task 13
@@ -266,32 +277,3 @@ Docker configs for Load Balancer cobfiguration and Web Server virtual host confi
 Database service containers located on a node with label 'role' defined in 'back'. Load Balancer and Web Server containers located on nodes with label 'role' defined in 'front'.
 'index.php' is available on public IP address and port 80 of of node where Load balancer container and indicates that connection to MySQL database is successfull.
 'mp2019-docker' S3 bucket contain 'networking', 'security-groups' and 'docker-nodes' templates in 'cf_templates' folder as well as 'docker-compose.yml' file, Load Balancer cobfiguration file, Web Server virtual host configuration file.
-=======
-- подготавливаем темплейты CloudFormation
-- подготавливаем докер файлы для поднятия сервисов, пушаем образы в регистри
-- подготавливаем докер композ файл
-- поднимаем инфраструктуру на основе CloudFormation темплейтов
-- копируем все на одну из машин которая мастер
-- деплоим сервисы
-
-Swarm которую нужно знать, он не умеет работать с энвайронмент переменными напрямую. Учитывая это нужно внести правки в php скрипт который проверяет соединение до базы данные. Еще один момент что имя переменных которые передаются для db сервера из композ файла должны содержать суффикс _FILE, в этом случае entrypoint скрипт распознает их как переменные которые нужно получить из файла, MySQL команда специально для этих целей внесла изменения в скрипт и включила вот эту функцию
-file_env() {
-	local var="$1"
-	local fileVar= "${var}_FILE"
-	local def="${2:-}"
-	if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
-		echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
-		exit 1
-	fi
-	local val="$def"
-	if [ "${!var:-}" ]; then
-		val="${!var}"
-	elif [ "${!fileVar:-}" ]; then
-		val="$(< "${!fileVar}")"
-	fi
-	export "$var"="$val"
-	unset "$fileVar"
-}
-
-переменные в этом случае объявляются соответсвующим образом
-file_env 'MYSQL_USER'
