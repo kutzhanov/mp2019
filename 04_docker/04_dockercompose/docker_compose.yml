@@ -7,7 +7,7 @@ services:
     image: kutzhanov/myapache:latest
     # port 80 is exposed;
     ports:
-      - "80"
+      - "80:80"
     # located in 'frontend' network;
     networks:
       - frontend
@@ -44,7 +44,7 @@ services:
     image: kutzhanov/myweb:latest
     # port 8080 is exposed;
     ports:
-      - "8080"
+      - "8080:8080"
     #	located in 'frontend' and 'backend' networks;
     networks:
       - frontend
@@ -100,7 +100,7 @@ services:
     image: kutzhanov/mysql:latest
     # port 3306 is exposed;
     ports:
-      - "3306"
+      - "3306:3306"
     #	located in 'backend' network;
     networks:
       - backend
