@@ -166,8 +166,12 @@ use entrypoint.sh as entrypoint(!!! Do not forget make it executable);
 port 3306 exposed;
 ensure that MySQL service is up and running;
 
+docker container run -d --rm --name mysql kutzhanov/myapache
+
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
 
 Build image for Database Server and push to Docker Hub
+
 docker tag mysqlimage:latest kutzhanov/mysql:latest
 docker push kutzhanov/mysql
 
@@ -232,12 +236,12 @@ Initiate Docker Swarm cluster on one of the machine and join two other as worker
 Task 9
 
 Update two nodes with label 'role' which has value 'front' and one with value 'back'
-docker node update --label-add role=back w7fiz
+docker node update --label-add role=front w7fiz
 
 Task 10
 
 Upload Docker Compose file, Load balancer configuration and Web Server virtual host settings from local machine to 'mp2019-docker' S3 bucket. Download the content on Docker Swarm manager node
-aws s3 cp s3://mp2019-docker-kutzhanov . --recursive
+aws s3 cp s3://mp2019-docker-kutzhanov/docker_compose . --recursive
 
 
 Task 11
@@ -254,10 +258,20 @@ Task 12
 
 Deploy Docker Swarm stack called 'mp2019' from Compose file
 
-docker stack deploy -с docker_compose.yml mp2019
+docker stack deploy -c docker_compose.yml mp2019
 docker stack services mp2019
 docker stack ps mp2019
 docker stack rm mp2019
+
+
+[ec2-user@ip-192-168-2-228 ~]$ docker service logs mp2019_db
+mp2019_db.1.meo2twa7rlqe@ip-192-168-1-217.ec2.internal    | /usr/local/bin/docker-entrypoint.sh: line 89: exec: gosu: not found
+mp2019_db.1.3gngnf0d6u4g@ip-192-168-1-217.ec2.internal    | /usr/local/bin/docker-entrypoint.sh: line 89: exec: gosu: not found
+mp2019_db.1.ze2gvh417q2i@ip-192-168-1-217.ec2.internal    | /usr/local/bin/docker-entrypoint.sh: line 89: exec: gosu: not found
+mp2019_db.1.tec8k6cyj248@ip-192-168-1-217.ec2.internal    | /usr/local/bin/docker-entrypoint.sh: line 89: exec: gosu: not found
+
+
+
 
 
 Task 13
