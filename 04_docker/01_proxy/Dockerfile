@@ -16,4 +16,4 @@ COPY mod_proxy.conf /etc/httpd/conf.d/
 EXPOSE 80
 
 #	ensure that Apache service is up and running;
-CMD /usr/sbin/httpd -D FOREGROUND
+ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
