@@ -119,9 +119,9 @@ Create Dockerfile to setup Apache Load Balancer with the following features:
 
 Build image for Load Balancer and push to Docker Hub
 
-docker image build -t myapachelb .
-docker container run -p 80:80 --name myapache --rm -it myapachelb bash
-docker container run -p 80:80 --name myapache --rm -d myapachelb
+docker image build -t kutzhanov/myapache .
+docker container run -p 80:80 --name myapache --rm -it kutzhanov/myapache bash
+docker container run -p 80:80 --name myapache --rm -d kutzhanov/myapache
 docker login
 docker tag local-image:tagname reponame:tagname
 docker push reponame:tagname
@@ -167,7 +167,7 @@ port 3306 exposed;
 ensure that MySQL service is up and running;
 
 docker image build -t kutzhanov/mysql .
-docker container run -d -p 3306:3306 --rm --name mysql kutzhanov/myapache
+docker container run -d -p 3306:3306 --rm --name mysql kutzhanov/mysql
 
 docker container run --name mysql -p 8080:8080 -it --rm mysqlimage /bin/bash
 
@@ -266,11 +266,18 @@ docker stack rm mp2019
 
 
 [ec2-user@ip-192-168-2-228 ~]$ docker service logs mp2019_db
-mp2019_db.1.meo2twa7rlqe@ip-192-168-1-217.ec2.internal    | /usr/local/bin/docker-entrypoint.sh: line 89: exec: gosu: not found
-mp2019_db.1.3gngnf0d6u4g@ip-192-168-1-217.ec2.internal    | /usr/local/bin/docker-entrypoint.sh: line 89: exec: gosu: not found
-mp2019_db.1.ze2gvh417q2i@ip-192-168-1-217.ec2.internal    | /usr/local/bin/docker-entrypoint.sh: line 89: exec: gosu: not found
-mp2019_db.1.tec8k6cyj248@ip-192-168-1-217.ec2.internal    | /usr/local/bin/docker-entrypoint.sh: line 89: exec: gosu: not found
+: invalid optionlmxbupor@ip-192-168-2-68.ec2.internal    | /bin/bash: -
+: invalid option9n14e8z7@ip-192-168-2-68.ec2.internal    | /bin/bash: -
+: invalid option4nhxohvc@ip-192-168-2-68.ec2.internal    | /bin/bash: -
+: invalid option7xx4wm06@ip-192-168-2-68.ec2.internal    | /bin/bash: -
 
+[ec2-user@ip-192-168-1-199 ~]$ docker service ps mp2019_db
+ID                  NAME                IMAGE                    NODE                           DESIRED STATE       CURRENT STATE           ERROR                       PORTS
+qf84p9fbnsyg        mp2019_db.1         kutzhanov/mysql:latest   ip-192-168-2-68.ec2.internal   Ready               Ready 4 seconds ago                                 
+sle7f64xn34t         \_ mp2019_db.1     kutzhanov/mysql:latest   ip-192-168-2-68.ec2.internal   Shutdown            Failed 4 seconds ago    "task: non-zero exit (1)"   
+d9ejehlb3sxs         \_ mp2019_db.1     kutzhanov/mysql:latest   ip-192-168-2-68.ec2.internal   Shutdown            Failed 11 seconds ago   "task: non-zero exit (1)"   
+2hjxawrzlvxp         \_ mp2019_db.1     kutzhanov/mysql:latest   ip-192-168-2-68.ec2.internal   Shutdown            Failed 18 seconds ago   "task: non-zero exit (1)"   
+fr7t0l3fpcvg         \_ mp2019_db.1     kutzhanov/mysql:latest   ip-192-168-2-68.ec2.internal   Shutdown            Failed 25 seconds ago   "task: non-zero exit (1)"   
 
 
 
