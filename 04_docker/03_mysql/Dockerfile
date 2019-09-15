@@ -15,7 +15,7 @@ RUN mkdir /docker-entrypoint-initdb.d
 
 # use entrypoint.sh as entrypoint(!!! Do not forget make it executable);
 COPY docker-entrypoint.sh /usr/local/bin/
-RUN c /usr/local/bin/docker-entrypoint.sh
+RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
 RUN ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 ENTRYPOINT ["docker-entrypoint.sh"]
 
