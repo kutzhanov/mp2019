@@ -90,7 +90,7 @@ services:
       MYSQL_USER_FILE: /run/secrets/mysql_user
       MYSQL_PASSWORD_FILE: /run/secrets/mysql_pass
       MYSQL_DATABASE_FILE: /run/secrets/mysql_db
-      MYSQL_SERVERNAME: db
+      MYSQL_SERVERNAME: mp2019_db
     depends_on:
       - db
 
