@@ -14,7 +14,7 @@ services:
     # Apache configuration defined in Docker config;
     configs:
       - source: lb_config
-        target: /etc/httpd/conf.d/
+        target: /etc/httpd/conf.d/mod_proxy.conf
         mode: 655
     deploy:
       # the service has one replica;
@@ -52,7 +52,7 @@ services:
     # Apache configuration for virtual host defined in Docker config;
     configs:
       - source: web_config
-        target: /etc/httpd/conf/
+        target: /etc/httpd/conf/httpd.conf
         mode: 655
     deploy:
       # the service has two replicas;
@@ -164,9 +164,9 @@ secrets:
 configs:
   lb_config: # Load Balancer Apache configuration
   # Create Apache Load Balancer configuration which will balance traffic between 'web' service containers by Round Robin method.
-    file: mod_proxy.conf
+    file: ./mod_proxy.conf
   web_config: # Web Server virtual host settings
-    file: httpd.conf
+    file: ./httpd.conf
 
 # Definitions for 'web_data' volume
 volumes: # same as docker volume create
