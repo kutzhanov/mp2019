@@ -1,7 +1,7 @@
 # Dockerfile to setup Apache Load Balancer with the following features:
 
 #	source image is latest amazonlinux;
-FROM amazonlinux:latest
+FROM amazonlinux:2.0.20190823.1
 
 #	image maintainer is defined;
 LABEL maintainer="Timur_Kutzhanov@epam.com"
@@ -16,4 +16,4 @@ COPY mod_proxy.conf /etc/httpd/conf.d/
 EXPOSE 80
 
 #	ensure that Apache service is up and running;
-CMD /usr/sbin/httpd -D FOREGROUND
+ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]

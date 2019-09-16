@@ -1,7 +1,7 @@
 # Dockerfile to setup Apache Web Server with the following features:
 
 # source image is latest amazonlinux;
-FROM amazonlinux:latest
+FROM amazonlinux:2.0.20190823.1
 
 # image maintainer is defined;
 LABEL maintainer="Timur_Kutzhanov@epam.com"
