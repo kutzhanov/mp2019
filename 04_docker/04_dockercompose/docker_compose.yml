@@ -41,7 +41,7 @@ services:
   # Docker Swarm service called 'web' with the configuration:
   web:
     # based on Web Server image located in Docker Hub;
-    image: kutzhanov/myweb:latest
+    image: kutzhanov/myweb:1.1
     # port 8080 is exposed;
     ports:
       - "8080:8080"
