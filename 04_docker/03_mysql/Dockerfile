@@ -13,6 +13,11 @@ RUN yum install mysql-community-server -y
 
 RUN mkdir /docker-entrypoint-initdb.d
 
+ENV MYSQL_USER_FILE="/run/secrets/mysql_user"
+ENV MYSQL_PASSWORD_FILE="/run/secrets/mysql_pass"
+ENV MYSQL_ROOT_PASSWORD_FILE="/run/secrets/mysql_root_pass"
+ENV MYSQL_DATABASE_FILE="/run/secrets/mysql_db"
+
 # use entrypoint.sh as entrypoint(!!! Do not forget make it executable);
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
