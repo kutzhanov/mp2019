@@ -167,7 +167,7 @@ port 3306 exposed;
 ensure that MySQL service is up and running;
 
 docker image build -t kutzhanov/mysql .
-docker container run -d -p 3306:3306 --rm --name mysql kutzhanov/mysql
+docker container run -d -p 3306:3306 --name mysql kutzhanov/mysql
 
 docker container run --name mysql -p 8080:8080 -it --rm mysqlimage /bin/bash
 
@@ -249,7 +249,7 @@ Task 11
 
 Create Docker secrets 'mysql_user', 'mysql_pass', 'mysql_root_pass', 'mysql_db' which contain values for MySQL user, password, root user password and database name
 
-echo "dbuser" | docker secret create mysql_user -
+echo "mysql" | docker secret create mysql_user -
 echo "dbpass" | docker secret create mysql_pass -
 echo "123456Qw" | docker secret create mysql_root_pass -
 echo "mydb" | docker secret create mysql_db -
@@ -263,6 +263,12 @@ docker stack deploy -c docker_compose.yml mp2019
 docker stack services mp2019
 docker stack ps mp2019
 docker stack rm mp2019
+
+docker stack ps mp2019 --no-trunc
+
+trod6jzhtvfg6guprttyqu00v   mp2019_balancer.1   kutzhanov/myapache:latest@sha256:492333ea80878c73b97c1fbb4ca64657b05c439f2c4c1236a0d145a2bae2a515   ip-192-168-1-155.ec2.internal   Shutdown Failed less than a second ago     "starting container failed: OCI runtime create failed: container_linux.go:348: starting container process caused "process_linux.go:402: container init caused \"rootfs_linux.go:58: mounting \\\"/var/lib/docker/containers/8d88c2b7f5ee00dc1f7f4a14eb3e7c0986b                       58f10bcb1ffa78ed24c3940faab8a/mounts/secrets/1mezr7ga7ea4nhmba5wsjb8vp\\\" to rootfs \\\"/var/lib/docker/overlay2/bbcd193a183be373e8544651a12ab3ecf5d351431cb6cf2c218049c3a97219a7/merged\\\" at \\\"/var/lib/docker/overlay2/bbcd193a183be373e8544651a12ab3ecf5d351431cb6cf2c218049c3a97219a7/merged/etc/httpd/conf.d\\\" caused \\\"not a directory\\\"\"": unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type"                       
+
+gtljutolcz2bwsj0hd6loz24n   mp2019_web.1        kutzhanov/myweb:latest@sha256:3de3bc8f03ba36376faa039388ed1afd0fe849908f3e8efa2ffc34914ad957d7      ip-192-168-1-168.ec2.internal   Shutdown Failed 3 seconds ago              "starting container failed: OCI runtime create failed: container_linux.go:348: starting cont                       ainer process caused "process_linux.go:402: container init caused \"rootfs_linux.go:58: mounting \\\"/var/lib/docker/containers/0c938754b1a0811f1f2dedbc6a32c7f4675fe63d8f291d264758660f6f2ed9e6/mounts/secrets/0zg9xipvgrh68cfcxj4a8grtg\\\" to rootfs \\\"/var/lib/docker/overlay2/f9e365c58db9dd8fa0a391187de11bd42400566a12fee65f5ddc19a890ed6b16/merged\\\" at \\\"/var/lib/docker/overlay2/f9e365c58db9dd8fa0a391187de11bd42400566a12fee65f5ddc19a890ed6b16/merged/etc/httpd/conf\\\" caused \\\"not a directory\\\"\"": unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type"   
 
 
 [ec2-user@ip-192-168-2-228 ~]$ docker service logs mp2019_db
